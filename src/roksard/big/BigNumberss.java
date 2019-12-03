@@ -16,7 +16,13 @@ public class BigNumberss {
         System.out.println(a.compareTo(b) > 0); //greater than
     }
 
-    public static void main(String[] args) {
+    public static void main3(String[] args) {
         System.out.println(0.2+0.1);
+    }
+
+    public static void main(String[] args) {
+        BigDecimal a = BigDecimal.valueOf(0.1);
+        BigDecimal b = BigDecimal.valueOf(0.2);
+        System.out.println(a.add(b).toString());
     }
 }
