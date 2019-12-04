@@ -3,6 +3,7 @@ package roksard.nulls;
 import sun.awt.datatransfer.DataTransferer;
 
 import java.math.BigDecimal;
+import java.util.Objects;
 
 public class Nulls {
     public static int compare(Object a, Object b) {
@@ -22,8 +23,18 @@ public class Nulls {
 
     }
 
-    public static void main(String[] args) {
+    public static void main2(String[] args) {
         Short s = null;
         System.out.println(s == 1);
+    }
+
+    public static void main(String[] args) {
+        Integer a = null;
+        Integer b = new Integer(30);
+        Integer c = new Integer(30);
+        Integer d = 30;
+        System.out.println(Objects.equals(a, b));
+        System.out.println(Objects.equals(b, c));
+        System.out.println(Objects.equals(c, d));
     }
 }
