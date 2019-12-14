@@ -31,6 +31,24 @@ public class QuickSort1 {
             return all;
         }
     }
+
+    int[] quickSort(int[] array) {
+        if (array.length < 2) {
+            return array;
+        } else if (array.length == 2) {
+            if (array[1] < array[0]) {
+                int buf = array[0];
+                array[0] = array[1];
+                array[1] = buf;
+            }
+            return array;
+        } else {
+            int base = array[0];
+            int beforeIdMax = 0;
+            int afterIdMax = 0;
+
+        }
+    }
     public static void main(String[] args) {
         System.out.println(quickSort(Arrays.asList(5, 4, 3, 2, 10, 15, 1, 7)));
     }
