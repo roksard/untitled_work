@@ -48,6 +48,7 @@ public class QuickSort1 {
             int afterIdMax = 0;
 
         }
+        return null;
     }
     public static void main(String[] args) {
         System.out.println(quickSort(Arrays.asList(5, 4, 3, 2, 10, 15, 1, 7)));
