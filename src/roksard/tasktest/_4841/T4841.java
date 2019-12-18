@@ -2,7 +2,6 @@ package roksard.tasktest._4841;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.Objects;
 
 public class T4841 {
     static void testContractSecurities(
