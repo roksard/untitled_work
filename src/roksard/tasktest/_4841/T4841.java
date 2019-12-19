@@ -47,8 +47,7 @@ public class T4841 {
 
     }
 
-
-    public static void main(String[] args) {
+    public static void main1(String[] args) {
 
         boolean isIncreaseWinnerInitialPrice;
         BigDecimal contractPrice;
@@ -96,5 +95,17 @@ public class T4841 {
         lotPurchaseSmp = 2;
         contractSecurityPercent = BigDecimal.valueOf(10);
         testContractSecurities(isIncreaseWinnerInitialPrice, contractPrice, lotSecuritySum, nmcLot, lotPurchaseSmp, contractSecurityPercent);
+    }
+
+
+    static BigDecimal calcPercentSecurity(BigDecimal a, BigDecimal b) {
+        return a
+                .multiply(BigDecimal.valueOf(100))
+                .divide(b, 2, RoundingMode.HALF_UP);
+
+    }
+
+    public static void main(String[] args) {
+        System.out.println(calcPercentSecurity(BigDecimal.valueOf(1200), BigDecimal.valueOf(1958000)));
     }
 }
