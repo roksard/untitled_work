@@ -32,25 +32,45 @@ public class QuickSort1 {
         }
     }
 
-    int[] quickSort(int[] array) {
-        if (array.length < 2) {
-            return array;
-        } else if (array.length == 2) {
-            if (array[1] < array[0]) {
-                int buf = array[0];
-                array[0] = array[1];
-                array[1] = buf;
-            }
-            return array;
+    static int safeId(int max, int min, int id) {
+        if (id < min) {
+            return min;
+        } else if (id > max) {
+            return max;
         } else {
-            int base = array[0];
-            int beforeIdMax = 0;
-            int afterIdMax = 0;
+            return id;
+        }
+    }
 
+    static void quickSort(int[] array, int start, int end) {
+        final int arrLen = end - start + 1;
+        if (arrLen < 2) {
+            //return array;
+        } else if (arrLen == 2) {
+            if (array[end] < array[start]) {
+                int buf = array[start];
+                array[start] = array[end];
+                array[end] = buf;
+            }
+            //return array;
+        } else {
+            int baseId = start;
+            for (int i = start; i <= end; i++) {
+                if (array[i] < array[baseId]) {
+                    int buf = array[baseId];
+                    array[baseId] = array[i];
+                    baseId = i;
+                    array[i] = buf;
+                }
+            }
+            quickSort(array, start, safeId(start, end, baseId-1));
+            quickSort(array, safeId(start, end, baseId+1), end);
         }
         return null;
     }
     public static void main(String[] args) {
-        System.out.println(quickSort(Arrays.asList(5, 4, 3, 2, 10, 15, 1, 7)));
+        int[] array = new int[]{3,4,1,2,6,7,10,7,5};
+        quickSort(array, 1, 1);
+        System.out.println(Arrays.toString(array));
     }
 }
