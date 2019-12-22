@@ -66,7 +66,7 @@ public class QuickSort1 {
             quickSort(array, start, safeId(start, end, baseId-1));
             quickSort(array, safeId(start, end, baseId+1), end);
         }
-        return null;
+        //return null;
     }
     public static void main(String[] args) {
         int[] array = new int[]{3,4,1,2,6,7,10,7,5};
