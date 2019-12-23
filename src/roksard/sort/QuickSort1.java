@@ -32,7 +32,7 @@ public class QuickSort1 {
         }
     }
 
-    static int safeId(int max, int min, int id) {
+    static int safeId(int min, int max, int id) {
         if (id < min) {
             return min;
         } else if (id > max) {
@@ -42,35 +42,70 @@ public class QuickSort1 {
         }
     }
 
+    static void swapElements(Object array_, int aIndex, int bIndex) {
+        boolean ok = false;
+        if (array_ instanceof int[]) {
+            int[] array = (int[])array_;
+            if (aIndex >= 0 && aIndex <= array.length
+                    && bIndex >= 0 && bIndex <= array.length
+            ) {
+                int buff = array[aIndex];
+                array[aIndex] = array[bIndex];
+                array[bIndex] = buff;
+                ok = true;
+            }
+        }
+        if (!ok) {
+            throw new RuntimeException("ArraySwapException");
+        }
+    }
+
+    /**
+     *
+     * @param array
+     * @param baseId_
+     * @return new baseId
+     */
+    static int moveBase(int[] array, int baseId_, int start, int end) {
+        int baseId = baseId_;
+        for (int i = start; i <= end; i++) {  // 3, 4, 1
+            if (array[i] < array[baseId]) {
+                int buff = array[i];
+                for(int n = i; n > baseId; n--) {
+                    swapElements(array, n, n-1);
+                }
+                array[baseId] = buff;
+                baseId++;
+            }
+        }
+        return baseId;
+    }
+
+    static void quickSort(int[] array) {
+        quickSort(array, 0, array.length-1);
+    }
+
     static void quickSort(int[] array, int start, int end) {
         final int arrLen = end - start + 1;
         if (arrLen < 2) {
             //return array;
+            return;
         } else if (arrLen == 2) {
             if (array[end] < array[start]) {
-                int buf = array[start];
-                array[start] = array[end];
-                array[end] = buf;
+                swapElements(array, start, end);
             }
             //return array;
         } else {
-            int baseId = start;
-            for (int i = start; i <= end; i++) {
-                if (array[i] < array[baseId]) {
-                    int buf = array[baseId];
-                    array[baseId] = array[i];
-                    baseId = i;
-                    array[i] = buf;
-                }
-            }
+            int baseId = moveBase(array, start, start, end);
             quickSort(array, start, safeId(start, end, baseId-1));
             quickSort(array, safeId(start, end, baseId+1), end);
+            return;
         }
-        //return null;
+        return;
     }
     public static void main(String[] args) {
-        int[] array = new int[]{3,4,1,2,6,7,10,7,5};
-        quickSort(array, 1, 1);
+        int[] array = new int[]{100,1,1,2,6,7,10,7,5};
+        quickSort(array);
         System.out.println(Arrays.toString(array));
     }
 }
