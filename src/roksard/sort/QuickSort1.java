@@ -3,6 +3,7 @@ package roksard.sort;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Random;
 import java.util.stream.Collectors;
 
 public class QuickSort1 {
@@ -61,51 +62,126 @@ public class QuickSort1 {
     }
 
     /**
-     *
-     * @param array
-     * @param baseId_
+     * moves base element (at baseId_) through the array, until all elements that are lower than base (elem < base)
+     * are on the left side, and all the other elements are on the right side of base element
+     * @param arrayWr (writable) - array to be modified
+     * @param baseId_ id of the element considered "base" element
      * @return new baseId
      */
-    static int moveBase(int[] array, int baseId_, int start, int end) {
+    static int moveBase(int[] arrayWr, int baseId_, int start, int end) {
         int baseId = baseId_;
         for (int i = start; i <= end; i++) {  // 3, 4, 1
-            if (array[i] < array[baseId]) {
-                int buff = array[i];
+            if (arrayWr[i] < arrayWr[baseId]) {
+                int buff = arrayWr[i];
                 for(int n = i; n > baseId; n--) {
-                    swapElements(array, n, n-1);
+                    swapElements(arrayWr, n, n-1);
                 }
-                array[baseId] = buff;
+                arrayWr[baseId] = buff;
                 baseId++;
             }
         }
         return baseId;
     }
 
-    static void quickSort(int[] array) {
-        quickSort(array, 0, array.length-1);
+
+    static void quickSort(int[] arrayWr) {
+        quickSort(arrayWr, 0, arrayWr.length-1);
     }
 
-    static void quickSort(int[] array, int start, int end) {
+    static void quickSort(int[] arrayWr, int start, int end) {
         final int arrLen = end - start + 1;
         if (arrLen < 2) {
             //return array;
             return;
         } else if (arrLen == 2) {
-            if (array[end] < array[start]) {
-                swapElements(array, start, end);
+            if (arrayWr[end] < arrayWr[start]) {
+                swapElements(arrayWr, start, end);
             }
             //return array;
         } else {
-            int baseId = moveBase(array, start, start, end);
-            quickSort(array, start, safeId(start, end, baseId-1));
-            quickSort(array, safeId(start, end, baseId+1), end);
+            int baseId = moveBase(arrayWr, start, start, end);
+            quickSort(arrayWr, start, safeId(start, end, baseId-1));
+            quickSort(arrayWr, safeId(start, end, baseId+1), end);
             return;
         }
         return;
     }
-    public static void main(String[] args) {
-        int[] array = new int[]{100,1,1,2,6,7,10,7,5};
+
+    public static void printArray(int[] array, int printMaxCount) {
+        System.out.print("[ ");
+        boolean part = false;
+        for(int i = 0; i < array.length; i++) {
+            if (i > printMaxCount-1) {
+                part = true;
+                break;
+            }
+            if (safeId(0, array.length-1, i) == i) {
+                System.out.print(array[i] + " ");
+            } else {
+                part = true;
+                break;
+            }
+        }
+        if (part) {
+            System.out.print("...\n");
+        } else {
+            System.out.print("]\n");
+        }
+    }
+
+    public static void testArrayIsSorted(int[] arrayBefore, int[] arrayAfter) {
+        boolean fail = false;
+        fail = arrayBefore.length != arrayAfter.length;
+        List<Integer> before = Arrays.stream(arrayBefore).mapToObj(i->i).collect(Collectors.toList());
+        List<Integer> after = Arrays.stream(arrayAfter).mapToObj(i->i).collect(Collectors.toList());
+        fail = before.stream().anyMatch(i -> !after.contains(i));
+
+        int prev = 0;
+        boolean first = true;
+        for (int i : after) {
+            if (first) {
+                first = false;
+                prev = i;
+            } else {
+                fail = prev > i;
+            }
+        }
+
+        if (fail) {
+            throw new RuntimeException("testArrayIsSorted failed");
+        }
+    }
+
+    public static long testSort(int elementsCount, int elemMinValue, int elemMaxValue, int printLimit) {
+        LinkedList<Integer> list = new LinkedList<>();
+        Random rand = new Random();
+        for (int i = 0; i < elementsCount; i++) {
+            list.add(rand.nextInt(elemMaxValue - elemMinValue + 1) + elemMinValue);
+        }
+        int[] array = list.stream().mapToInt(i -> i).toArray();
+        int[] before = Arrays.copyOf(array, array.length);
+        //printArray(array, printLimit);
+        long beforeTime = System.nanoTime();
         quickSort(array);
-        System.out.println(Arrays.toString(array));
+        long afterTime = System.nanoTime();
+        //printArray(array, printLimit);
+        testArrayIsSorted(before, array);
+        return afterTime - beforeTime;
+    }
+
+    public static void testMulti(int times, int n) {
+        long time = 0;
+        int count = 5;
+        for (int i = 0; i < count; i++) {
+            time += testSort(n, 1, 100, 30);
+        }
+        time = time / count;
+        System.out.println(n + " elements, "+times+" times, avg time: " + time);
+    }
+    public static void main(String[] args) {
+        testMulti(5, 100);
+        testMulti(5, 1000);
+        testMulti(5, 10000);
+        testMulti(5, 100000);
     }
 }
