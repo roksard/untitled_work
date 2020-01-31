@@ -4,11 +4,11 @@ import java.util.Calendar;
 import java.util.Date;
 
 public class HolidayService {
-    public boolean isHoliday(Date date) {
+    public static boolean isHoliday(Date date) {
         return false;
     }
 
-    public Date addWorkDayToDate(Date date, Integer dayCount) {
+    public static Date addWorkDayToDate(Date date, Integer dayCount) {
         Calendar c = Calendar.getInstance();
         c.setTime(date);
 
