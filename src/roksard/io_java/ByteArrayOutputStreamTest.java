@@ -1,12 +1,21 @@
 package roksard.io_java;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
+import javax.sound.sampled.AudioInputStream;
+import java.io.*;
 import java.nio.charset.Charset;
+import java.security.DigestInputStream;
 import java.util.Arrays;
 
 public class ByteArrayOutputStreamTest {
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws Exception {
+        try (ByteArrayOutputStream bos = new ByteArrayOutputStream();
+             ByteArrayOutputStream bos2 = new ByteArrayOutputStream()
+        ) {
+            System.out.println(bos.getClass());
+            System.out.println(bos2.getClass());
+        }
+    }
+    public static void main1(String[] args) throws IOException {
         String s = "abc";
         try (ByteArrayOutputStream bos = new ByteArrayOutputStream(10)) {
             bos.write(s.getBytes(Charset.defaultCharset()));
