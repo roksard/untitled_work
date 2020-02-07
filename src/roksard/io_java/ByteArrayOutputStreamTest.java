@@ -1,9 +1,8 @@
 package roksard.io_java;
 
-import javax.sound.sampled.AudioInputStream;
-import java.io.*;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.nio.charset.Charset;
-import java.security.DigestInputStream;
 import java.util.Arrays;
 
 public class ByteArrayOutputStreamTest {
