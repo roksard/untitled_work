@@ -16,7 +16,9 @@ public class TimeZone_ {
 //        Instant inst = Instant.now(defaultClock);
 //        Timestamp t1 = new Timestamp(inst.toEpochMilli());
         Timestamp t2 = Timestamp.valueOf(ZonedDateTime.now(ZoneId.of("Asia/Yekaterinburg")).toLocalDateTime());
+        Timestamp t3 = Timestamp.valueOf(ZonedDateTime.now(ZoneId.of("UTC+5")).toLocalDateTime());
         //System.out.println(t1);
         System.out.println(t2);
+        System.out.println(t3);
     }
 }
