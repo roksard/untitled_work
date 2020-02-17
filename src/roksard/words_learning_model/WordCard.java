@@ -22,7 +22,15 @@ public class WordCard {
             } else if (!aReady && bReady) {
                 return -1;
             } else {
-                return a.getNextRepeat().compareTo(b.getNextRepeat());
+                if (a.getNextRepeat() == null && b.getNextRepeat() != null) {
+                    return 1;
+                } else if (a.getNextRepeat() != null && b.getNextRepeat() == null) {
+                    return -1;
+                } else if (a.getNextRepeat() == null && b.getNextRepeat() == null) {
+                    return 0;
+                } else {
+                    return a.getNextRepeat().compareTo(b.getNextRepeat());
+                }
             }
         }
     };
@@ -99,7 +107,7 @@ public class WordCard {
     public String toString() {
         return "{"+ LocalDateTime.ofInstant(createdAt, ZoneId.of("UTC")).toLocalDate().toString()
                 + ", " + learnProgress + "/" + timeToLearn + ", "
-                + LocalDateTime.ofInstant(nextRepeat, ZoneId.of("UTC")).toLocalDate().toString()
+                + ((nextRepeat == null) ? "-" : LocalDateTime.ofInstant(nextRepeat, ZoneId.of("UTC")).toLocalDate().toString())
                 + "}";
     }
 
