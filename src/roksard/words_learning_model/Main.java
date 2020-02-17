@@ -1,15 +1,12 @@
 package roksard.words_learning_model;
 
-import javafx.collections.transformation.SortedList;
-
 import java.time.Instant;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.time.chrono.ChronoPeriod;
 import java.time.temporal.ChronoUnit;
-import java.time.temporal.TemporalAmount;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.StringJoiner;
 
 public class Main {
     public static void print(Instant timestamp, List<WordCard> wordCards) {
@@ -87,7 +84,6 @@ public class Main {
             }
             print(current, wordCards);
             wordCards.sort(WordCard.getComparator());
-            //Util.sleep(1000);
             current = current.plus(1, ChronoUnit.DAYS);
         }
         System.out.println("Words learned in " + Config.totalLearningPeriod + " "

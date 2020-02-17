@@ -1,9 +1,6 @@
 package roksard.words_learning_model;
 
-import com.sun.javafx.collections.SortableList;
-
 import java.time.Instant;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
