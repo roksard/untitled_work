@@ -19,7 +19,7 @@ import java.util.Random;
 
 public class WorkBookCreator {
     static final String _resourceExt_ = ".xlsx";
-    static final String _resourcePath_ = "./target/classes/workbook1";
+    static final String _resourcePath_ = "target/classes/workbook1";
 
     public static List<Double> generateDoubles(int amount, int offset, int limit) {
         List<Double> doubles = new ArrayList<>(amount);
@@ -31,7 +31,13 @@ public class WorkBookCreator {
         return doubles;
     }
 
-    public static void writeBook(String resourcePath, String resourceExt, String nameSuffix, int dataSize, int pageLimit, boolean useLowMemWorkbook) throws Exception {
+    public static void writeBook(String resourcePath,
+                                 String resourceExt,
+                                 String nameSuffix,
+                                 int dataSize,
+                                 int pageLimit,
+                                 boolean useLowMemWorkbook,
+                                 boolean printPageInfo) throws Exception {
         try (FileInputStream fileInputStream = new FileInputStream(resourcePath + resourceExt);
              XSSFWorkbook wb = new XSSFWorkbook(fileInputStream);
              Workbook workbook = useLowMemWorkbook ? new SXSSFWorkbook(wb, 10000) : wb;
@@ -49,7 +55,9 @@ public class WorkBookCreator {
                     cell.setCellValue(d);
                 }
                 offset += pageLimit;
-                System.out.println(doubles.size() + "/" + dataSize);
+                if (printPageInfo) {
+                    System.out.println(doubles.size() + "/" + dataSize);
+                }
             } while (doubles.size() == pageLimit);
             doubles.clear();
             File file = new File(resourcePath + nameSuffix + resourceExt);
@@ -70,6 +78,6 @@ public class WorkBookCreator {
         final int size = 1000000;
         //writeBook(_resourcePath_, _resourceExt_, "-full", size, size, false); //should produce OutOfMemory error
         //writeBook(_resourcePath_, _resourceExt_, "-page", size, size / 100, false); //paged, oldbook
-        writeBook(_resourcePath_, _resourceExt_, "-page", size, size, true); //nopage, newbook
+        writeBook(_resourcePath_, _resourceExt_, "-page", size, size, true, false); //nopage, newbook
     }
 }
