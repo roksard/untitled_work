@@ -1,4 +1,4 @@
-package roksard.concurrency;
+package roksard.concurrency.dateformat_thread_nonsafe;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
