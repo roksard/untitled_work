@@ -1,4 +1,4 @@
-package roksard.concurrency.dateformat_thread_nonsafe.fixed;
+package roksard.concurrency.dateformat_thread_nonsafe.fixed_explicit_lock;
 
 import java.text.SimpleDateFormat;
 import java.time.Instant;

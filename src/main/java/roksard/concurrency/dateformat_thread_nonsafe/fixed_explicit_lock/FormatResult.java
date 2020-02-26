@@ -1,4 +1,4 @@
-package roksard.concurrency.dateformat_thread_nonsafe.fixed;
+package roksard.concurrency.dateformat_thread_nonsafe.fixed_explicit_lock;
 
 public class FormatResult {
     private String result;

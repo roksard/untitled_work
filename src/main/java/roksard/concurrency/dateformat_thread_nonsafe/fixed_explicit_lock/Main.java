@@ -1,7 +1,5 @@
-package roksard.concurrency.dateformat_thread_nonsafe.fixed;
+package roksard.concurrency.dateformat_thread_nonsafe.fixed_explicit_lock;
 
-import java.time.Instant;
-import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.Random;
 import java.util.concurrent.ExecutorService;
