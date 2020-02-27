@@ -16,9 +16,15 @@ public class Main {
     }
     public static void main(String[] args) {
         ExecutorService exec = Executors.newFixedThreadPool(5, new ThreadFactory() {
+            private int count = 0;
             @Override
             public Thread newThread(Runnable r) {
                 Thread t = new Thread(r);
+                int namesuf;
+                synchronized (this) {
+                    namesuf = count++;
+                }
+                t.setName("thx" + namesuf);
                 t.setUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
                     @Override
                     public void uncaughtException(Thread t, Throwable e) {
@@ -27,6 +33,7 @@ public class Main {
                                         .stream(e.getStackTrace())
                                         .map(elem -> elem.toString())
                                         .collect(Collectors.toList())));
+                        System.exit(5);
                     }
                 });
                 return t;
@@ -41,6 +48,7 @@ public class Main {
             });
         }
         exec.shutdown();
+        //for other threads using standard exception handler:
         throwRuntimeException();
     }
 }
