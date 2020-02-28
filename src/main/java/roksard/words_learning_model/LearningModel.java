@@ -93,7 +93,7 @@ public class LearningModel {
         long totalWords = wordCards.stream().map(WordCard::getWordCount).reduce(Integer::sum).orElse(0);
         System.out.println("Words learned in " + config.totalLearningPeriod + " "
                 + config.totalLearningPeriodUnit
-                + ": " + totalWords + " (" + String.format("%.2f", (double)totalWords/config.totalLearningPeriod)  +  ") "
+                + ": " + totalWords + " (" + String.format("%.2f", (double)totalWords/config.totalLearningPeriod)  +  "/day) "
         );
         System.out.println("maxRepeatExpirationDays: " + maxRepeatExpirationDays + " at card "
                 + instantToDateString(expiredTimestamps));

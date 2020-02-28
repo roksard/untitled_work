@@ -1,14 +1,16 @@
 package roksard.datetime.formatting_in_new_javatime;
 
-import java.text.SimpleDateFormat;
-import java.time.*;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.time.temporal.*;
+import java.time.temporal.ChronoField;
+import java.time.temporal.ChronoUnit;
+import java.time.temporal.TemporalAccessor;
 import java.util.Random;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
 
 public class FormattingNParsingInJavatime {
     private final static String formatPattern = "HH:mm";
@@ -18,9 +20,9 @@ public class FormattingNParsingInJavatime {
         System.out.println("--- simpleTest ---");
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern(formatPattern);
         //parsing
-        TemporalAccessor haveHours = dtf.parse(toParse);
-        System.out.println("hour: " + haveHours.get(ChronoField.HOUR_OF_DAY)
-                + "\n min: " + haveHours.get(ChronoField.MINUTE_OF_HOUR));
+        TemporalAccessor parsedTime = dtf.parse(toParse);
+        System.out.println("hour: " + parsedTime.get(ChronoField.HOUR_OF_DAY)
+                + "\n min: " + parsedTime.get(ChronoField.MINUTE_OF_HOUR));
         //formatting
         LocalDateTime now = LocalDateTime.ofInstant(Instant.now(), ZoneId.of("UTC+5"));
         System.out.println("current local UTC+5 time formatted: " + dtf.format(now));
