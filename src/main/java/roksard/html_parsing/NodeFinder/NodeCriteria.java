@@ -1,4 +1,4 @@
-package roksard.html_parsing;
+package roksard.html_parsing.NodeFinder;
 
 public class NodeCriteria {
     String className;

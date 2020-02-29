@@ -5,14 +5,17 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.nodes.TextNode;
 import org.jsoup.select.Elements;
+import roksard.html_parsing.NodeFinder.NodeCriteria;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.FileWriter;
-import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import static roksard.html_parsing.NodeFinder.NodeFinder.find;
 
 public class Main {
     final static String fileName = "target\\classes\\html_parse\\words-to-extract.html";
@@ -25,29 +28,6 @@ public class Main {
             return;
         }
         System.out.println(text);
-    }
-
-    public static List<Element> find(List<NodeCriteria> crs, int crId, Elements elements) {
-        List<Element> result = new ArrayList<>();
-        log("elements size: " + elements.size());
-        NodeCriteria cr = crs.get(crId);
-        for(Element elem : elements) {
-            log(elem.tagName());
-            if (cr.tagFits(elem.tagName()) && cr.classNameFits(elem.className())) {
-                if (crId+1 < crs.size()) {
-                    result.addAll(find(crs, crId+1, elem.children()));
-                } else {
-                    //found
-                    log("found: (" + elem.tagName() + ")");
-                    result.add(elem);
-                }
-            } else {
-                if (elem.children().size() > 0) {
-                    result.addAll(find(crs, crId, elem.children()));
-                }
-            }
-        }
-        return result;
     }
 
     static String filter(String input) {
@@ -63,22 +43,28 @@ public class Main {
         } else {
             doc = Jsoup.connect(url).get();
         }
+
         List<NodeCriteria> criteriaList = new ArrayList<NodeCriteria>() {{
             add(new NodeCriteria("row.*", "div"));
             add(new NodeCriteria("col.*", "div"));
             add(new NodeCriteria(".*", "p"));
         }};
-        int criteriaId = 0;
-        List<Element> found = find(criteriaList, criteriaId, doc.children());
+        List<Element> found = find(criteriaList, doc);
         StringBuilder output = new StringBuilder();
         found.forEach(elem -> {
             Iterator<TextNode> textNodes = elem.textNodes().iterator();
             for (Element ch : elem.children()) {
                 if (ch.tagName().equals("strong")) {
-                    output
-                            .append("\n")
-                            .append(filter(ch.text()))
-                            .append(";-;");
+                    Pattern p = Pattern.compile("(.*)\\((.*)\\)");
+                    Matcher matcher = p.matcher(filter(ch.text()));
+                    if (matcher.find() && matcher.groupCount() == 2) {
+                        output
+                                .append(output.length() > 0 ? "\n" : "")
+                                .append(matcher.group(1).trim())
+                                .append(";")
+                                .append(matcher.group(2).trim())
+                                .append(";-;");
+                    }
                 } else {
                     if (textNodes.hasNext()) {
                         output
