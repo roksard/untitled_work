@@ -14,7 +14,7 @@ public class MapMerge {
             boolean flag = rand.nextBoolean();
             BigDecimal value = BigDecimal.valueOf(i);
             System.out.println(flag + ": " + i);
-            map.merge(flag, (BigDecimal a, BigDecimal b) -> a.add(b));
+            map.merge(flag, value, BigDecimal::add);
         }
         System.out.println(map);
     }
