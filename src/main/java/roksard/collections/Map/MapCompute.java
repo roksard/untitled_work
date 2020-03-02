@@ -14,7 +14,7 @@ public class MapCompute {
             boolean flag = rand.nextBoolean();
             BigDecimal value = BigDecimal.valueOf(i);
             System.out.println(flag + ": " + i);
-            map.compute(flag, (Boolean key, BigDecimal current) -> current == null ? value : current.add(value));
+            map.compute(flag, (key, current) -> current == null ? value : current.add(value));
         }
         System.out.println(map);
     }
