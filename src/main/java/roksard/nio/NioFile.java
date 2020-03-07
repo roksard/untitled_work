@@ -22,7 +22,7 @@ class WriteFile implements Runnable {
     @Override
     public void run() {
         File file = new File("target/testfile.txt");
-        System.out.println("write to :" + file.getAbsolutePath());
+        System.out.println(NioFile.timestamp() + " write to: " + file.getAbsolutePath());
         try (FileOutputStream fos = new FileOutputStream(file);
              WritableByteChannel out = Channels.newChannel(fos);
         ) {
@@ -32,6 +32,7 @@ class WriteFile implements Runnable {
                 byte[] arr = new byte[] {65,66,67,68,(byte)i++};
                 out.write(ByteBuffer.wrap(arr));
             }
+            System.out.println(NioFile.timestamp() + " write successful.");
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
