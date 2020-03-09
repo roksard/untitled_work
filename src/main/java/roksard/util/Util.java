@@ -21,7 +21,7 @@ public class Util {
                 ZoneId.of("UTC+5")));
     }
 
-    public void log(Object... toPrint) {
+    public static void log(Object... toPrint) {
         System.out.println(timestamp() + Arrays.stream(toPrint)
                         .map(Object::toString)
                         .reduce("", (a, b) -> a + " " + b));
