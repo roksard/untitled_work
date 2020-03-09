@@ -6,7 +6,7 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 
 public class Util {
-    static void sleepn(long ms) {
+    public static void sleepn(long ms) {
         try {
             Thread.sleep(ms);
         } catch (InterruptedException e) {
@@ -14,7 +14,7 @@ public class Util {
         }
     }
 
-    static String timestamp() {
+    public static String timestamp() {
         Instant time = Instant.now();
         return DateTimeFormatter.ofPattern("HH:mm:ss.SSS").format(ZonedDateTime.ofInstant(time,
                 ZoneId.of("UTC+5")));
