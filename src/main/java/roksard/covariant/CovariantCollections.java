@@ -44,7 +44,7 @@ public class CovariantCollections {
         ArrayList<? extends Fruit> exFruit = new ArrayList<>();  //for reading only
         Fruit fruit = exFruit.get(0);
         Fruit mango = new Mango();
-        //exFruit.add(fruit); //cant add anything
+        //exFruit.add(fruit); //cant add anything because we don't know exact type of array
         //exFruit.add(mango);
 
         //covariant types:
