@@ -44,6 +44,13 @@ public class CovariantCollections {
         Fruit mango = new Mango();
         //exFruit.add(fruit); //cant add anything
         //exFruit.add(mango);
+
+        ArrayList<? super Mango> superMango = new ArrayList<>();
+        Object object = superMango.get(0); //reading as Object
+        superMango.add(new Mango()); //writing only exact type
+        //superMango.add(new Fruit()); //can't write
+
+
     }
 }
 
