@@ -39,12 +39,15 @@ public class CovariantCollections {
         ((ArrayList)mangoList).add(new Fruit());
         System.out.println(mangoList);
 
+
+        //covariant types:
         ArrayList<? extends Fruit> exFruit = new ArrayList<>();  //for reading only
         Fruit fruit = exFruit.get(0);
         Fruit mango = new Mango();
         //exFruit.add(fruit); //cant add anything
         //exFruit.add(mango);
 
+        //covariant types:
         ArrayList<? super Mango> superMango = new ArrayList<>();
         Object object = superMango.get(0); //reading as Object
         superMango.add(new Mango()); //writing only exact type
