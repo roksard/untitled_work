@@ -30,7 +30,7 @@ public class CovariantCollections {
         System.out.println(fruitList);
 
         //trying to put Banana into Mango-list
-        System.out.println("ArrayList<Mango>");
+        System.out.println("\nArrayList<Mango>");
         Object mangoList = new ArrayList<Mango>();
         ((ArrayList)mangoList).add(new Mango());
         System.out.println(mangoList);
@@ -42,12 +42,17 @@ public class CovariantCollections {
 }
 
 /* Output:
+ArrayList<Fruit>
 [Fruit]
 [Fruit, Banana]
 [Fruit, Banana, Mango]
+
+ArrayList<Mango>
 [Mango]
-[Mango, Banana]
-[Mango, Banana, Fruit]
+[Mango, Banana]  //!! Mango generic type information erased
+
+[Mango, Banana, Fruit] //!!
+
 
 Process finished with exit code 0
 
