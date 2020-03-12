@@ -38,6 +38,12 @@ public class CovariantCollections {
         System.out.println(mangoList);
         ((ArrayList)mangoList).add(new Fruit());
         System.out.println(mangoList);
+
+        ArrayList<? extends Fruit> exFruit = new ArrayList<>();  //for reading only
+        Fruit fruit = exFruit.get(0);
+        Fruit mango = new Mango();
+        //exFruit.add(fruit); //cant add anything
+        //exFruit.add(mango);
     }
 }
 
