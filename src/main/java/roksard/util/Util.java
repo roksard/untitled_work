@@ -16,6 +16,7 @@ public class Util {
                     t.setUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
                         @Override
                         public void uncaughtException(Thread t, Throwable e) {
+                            System.err.println("Uncaught exception: ");
                             System.err.println(t);
                             System.err.println(e);
                             System.exit(1);
