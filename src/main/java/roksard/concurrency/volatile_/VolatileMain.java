@@ -75,3 +75,11 @@ public class VolatileMain {
         test(20);
     }
 }
+
+/* Output:
+21:21:13.927 Thread[pool-2-thread-15,5,main] is started.
+21:21:13.927 Thread[pool-2-thread-18,5,main] is started.
+21:21:15.509 Thread[pool-2-thread-21,5,main] sending stop.
+21:21:17.352 Thread[main,5,main] threads stil running.. shutting down app with code 1
+//threads dont see that variable has been changed by another thread so they keep running forever (unless the variable is volatile)
+ */
