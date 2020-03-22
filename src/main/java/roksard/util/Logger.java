@@ -17,7 +17,7 @@ public class Logger {
         this.prefix = prefix;
     }
 
-    public String timestamp() {
+    public static String timestamp() {
         Instant time = Instant.now();
         return DateTimeFormatter.ofPattern("HH:mm:ss.SSS").format(ZonedDateTime.ofInstant(time,
                 ZoneId.systemDefault()));
