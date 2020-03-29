@@ -2,30 +2,38 @@ package roksard.GUI.EvolutionSimulator.gui;
 
 import java.awt.*;
 import java.awt.geom.Ellipse2D;
-import java.util.Random;
 
-public class Circle implements Drawable {
-    int x, y, size;
+public class Circle implements Shape {
+    int size;
+    Point location;
+
+    public Point getLocation() {
+        return location;
+    }
+
+    public void setLocation(Point location) {
+        this.location = location;
+    }
+
     Color color;
 
-    public Circle(int x, int y, int size, Color color) {
-        this.x = x;
-        this.y = y;
+    public Circle(Point location, int size, Color color) {
+        this.location = new Point(location);
         this.size = size;
         this.color = color;
     }
 
-    public Circle(int x, int y) {
-        this(x, y, 10, Color.GRAY);
+    public Circle(Point location) {
+        this(location, 10, Color.GRAY);
     }
 
-    public Circle(int x, int y, int size) {
-        this(x, y, size, Color.GRAY);
+    public Circle(Point location, int size) {
+        this(location, size, Color.GRAY);
     }
 
     public void draw(Graphics g) {
         Graphics2D g2d = (Graphics2D) g;
-        Ellipse2D.Double circle = new Ellipse2D.Double(x, y, size, size);
+        Ellipse2D.Double circle = new Ellipse2D.Double(location.getX(), location.getY(), size, size);
 
         g2d.setColor(color);
         g2d.fill(circle);
