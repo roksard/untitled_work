@@ -53,17 +53,21 @@ public class Creature implements Runnable {
 
     }
 
+    private double rangeLimit(double from, double to, double value) {
+        double result = value;
+        if (result < from)
+            result = from;
+        else if(result > to)
+            result = to;
+        return result;
+    }
+
     private void walk() {
         double newX, newY;
-        do {
-            double x = location.getX();
-            double y = location.getY();
-            int deltaX = rand.nextInt(dna.speed * 2 + 1) - dna.speed;
-            int deltaY = rand.nextInt(dna.speed * 2 + 1) - dna.speed;
-            newX = x + deltaX;
-            newY = y + deltaY;
-        } while (newX < 0 || newX > simulator.getFieldSize().getX()
-                || newY < 0 || newY > simulator.getFieldSize().getY());
+        int deltaX = rand.nextInt(dna.speed * 2 + 1) - dna.speed;
+        int deltaY = rand.nextInt(dna.speed * 2 + 1) - dna.speed;
+        newX = rangeLimit(0, simulator.getFieldSize().getX(), location.getX() + deltaX);
+        newY = rangeLimit(0, simulator.getFieldSize().getY(), location.getY() + deltaY);
         location.setLocation(newX, newY);
         updateShape();
     }
