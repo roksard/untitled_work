@@ -23,18 +23,19 @@ public class Nulls {
 
     }
 
-    public static void main2(String[] args) {
-        Short s = null;
-        System.out.println(s == 1);
-    }
-
     public static void main(String[] args) {
         Integer a = null;
         Integer b = new Integer(30);
         Integer c = new Integer(30);
         Integer d = 30;
-        System.out.println(Objects.equals(a, b));
-        System.out.println(Objects.equals(b, c));
-        System.out.println(Objects.equals(c, d));
+        System.out.println(Objects.equals(a, b)); //false
+        System.out.println(Objects.equals(b, c)); //true
+        System.out.println(Objects.equals(c, d)); //true
+
+        System.out.println("comparing null:");
+        System.out.println(null == null); //true
+        Short s = null;
+        System.out.println(s == 1); //NullPointerException (trying to cast 's' to int type)
+        //System.out.println(null == 1); //compilation error (incomparable types: <nulltype> and int)
     }
 }
