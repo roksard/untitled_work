@@ -33,10 +33,13 @@ public class EvolutionSimulator {
         executorService.execute(c);
     }
 
+    public Food randomFood() {
+        return new Food(randomPoint(400,400), Food.ENERGY);
+    }
+
     public EvolutionSimulator(int creaturesNumber, int foodNumber) {
-        final int foodEnergy = 50;
         for(int i = 0; i < foodNumber; i++) {
-            foods.add(new Food(randomPoint(400,400), foodEnergy));
+            foods.add(randomFood());
         }
         for(int i = 0; i < creaturesNumber; i++) {
             creatures.add(new Creature(this, randomPoint(400, 400), new Dna(5, 10, 200)));

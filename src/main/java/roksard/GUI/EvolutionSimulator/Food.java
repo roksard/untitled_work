@@ -8,6 +8,7 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class Food {
+    public static final int ENERGY = 50;
     private Shape shape;
     private Point location;
     volatile boolean exists = true;

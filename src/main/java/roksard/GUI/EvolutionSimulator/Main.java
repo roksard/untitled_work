@@ -9,7 +9,7 @@ import java.util.TimerTask;
 
 public class Main {
     public static void main(String[] args) {
-        EvolutionSimulator simulator = new EvolutionSimulator(10, 400);
+        EvolutionSimulator simulator = new EvolutionSimulator(10, 40);
 
         JFrame frame = new JFrame();
         frame.add(new JPanel() {
@@ -21,7 +21,9 @@ public class Main {
             @Override
             protected void paintComponent(Graphics g) {
                 super.paintComponent(g);
-                simulator.getFoods().forEach(food -> food.draw(g));
+                synchronized (simulator.getFoods()) {
+                    simulator.getFoods().forEach(food -> food.draw(g));
+                }
                 synchronized (simulator.getCreatures()) {
                     simulator.getCreatures().sort(new Comparator<Creature>() {
                         @Override
@@ -45,5 +47,16 @@ public class Main {
                 frame.repaint();
             }
         }, 100, 10);
+
+        new Timer().schedule(new TimerTask() {
+            @Override
+            public void run() {
+                synchronized (simulator.getFoods()) {
+                    for (int i = 0; i < 10; i++) {
+                        simulator.getFoods().add(simulator.randomFood());
+                    }
+                }
+            }
+        }, 5000, 5000);
     }
 }
