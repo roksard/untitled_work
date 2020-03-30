@@ -18,6 +18,7 @@ public class Creature implements Runnable {
     State state = State.WANDER;
     static enum State {WANDER, GET_FOOD}
     Food foundFood;
+    boolean isAlive = true;
 
     public Creature(EvolutionSimulator es, Point location, Dna dna) {
         this.simulator = es;
@@ -27,11 +28,18 @@ public class Creature implements Runnable {
     }
 
     private void updateShape() {
-        shape.setLocation(location);
+        if (!isAlive) {
+            shape = new Circle(this.location, this.dna.size, Color.GRAY);
+        } else {
+            shape.setSize(this.dna.size);
+            shape.setLocation(location);
+        }
     }
 
     public void draw(Graphics g) {
-        shape.draw(g);
+        if (shape != null) {
+            shape.draw(g);
+        }
     }
 
     private Optional<Food> findClosestFood() {
@@ -64,11 +72,12 @@ public class Creature implements Runnable {
 
     private void walk() {
         double newX, newY;
-        int deltaX = rand.nextInt(dna.speed * 2 + 1) - dna.speed;
-        int deltaY = rand.nextInt(dna.speed * 2 + 1) - dna.speed;
+        double deltaX = rand.nextInt((int)Math.round(dna.speed * 2 + 1)) - dna.speed;
+        double deltaY = rand.nextInt((int)Math.round(dna.speed * 2 + 1)) - dna.speed;
         newX = rangeLimit(0, simulator.getFieldSize().getX(), location.getX() + deltaX);
         newY = rangeLimit(0, simulator.getFieldSize().getY(), location.getY() + deltaY);
         location.setLocation(newX, newY);
+        addEnergy(-1);
         updateShape();
     }
 
@@ -78,13 +87,36 @@ public class Creature implements Runnable {
         } else {
             this.location.setLocation(GeometryUtils.getPointOnVector(this.location, location, dna.speed));
         }
+        addEnergy(-1);
         updateShape();
+    }
+
+    private void addEnergy(int deltaEnergy) {
+        this.energy += deltaEnergy;
+        if (this.energy <= 0) {
+            this.isAlive = false;
+            updateShape();
+        } else if (this.energy > 200) {
+            Dna newDna = new Dna(this.dna);
+            int mutation = rand.nextInt(10);
+            if (mutation == 1) {
+                newDna.speed = newDna.speed + rand.nextDouble() * newDna.speed / 10;
+            }
+            if (mutation == 2) {
+                newDna.senseRadius = newDna.senseRadius + rand.nextDouble() * newDna.senseRadius / 10;
+            }
+            if (mutation == 3) {
+                newDna.size = newDna.size + rand.nextDouble() * newDna.size / 10;
+            }
+            simulator.addCreature(new Creature(simulator, this.location, newDna));
+            addEnergy(-100);
+        }
     }
 
     @Override
     public void run() {
         try {
-            while (!Thread.interrupted()) {
+            while (!Thread.interrupted() && isAlive) {
                 Thread.sleep(100);
                 if (state == State.WANDER) {
                     walk();
@@ -94,22 +126,31 @@ public class Creature implements Runnable {
                         foundFood = food;
                     });
                 } else if (state == State.GET_FOOD && foundFood != null) {
-                    if (foundFood.getLocation().distance(this.location) < 2) {
-                        //eat
-                        foundFood.lock.lock();
-                        try {
-                            if (foundFood.isExists()) {
-                                foundFood.setExists(false);
-                                energy += foundFood.getEnergy();
-                            }
-                        } finally {
-                            foundFood.lock.unlock();
-                            foundFood = null;
-                            state = State.WANDER;
-                        }
+                    boolean foodExists;
+                    synchronized (foundFood) {
+                        foodExists = foundFood.isExists();
+                    }
+                    if (!foodExists) {
+                        foundFood = null;
+                        state = State.WANDER;
                     } else {
-                        //move towards food
-                        walk(foundFood.getLocation());
+                        if (foundFood.getLocation().distance(this.location) < 1) {
+                            //eat
+                            foundFood.lock.lock();
+                            try {
+                                if (foundFood.isExists()) {
+                                    foundFood.setExists(false);
+                                    addEnergy(foundFood.getEnergy());
+                                }
+                            } finally {
+                                foundFood.lock.unlock();
+                                foundFood = null;
+                                state = State.WANDER;
+                            }
+                        } else {
+                            //move towards food
+                            walk(foundFood.getLocation());
+                        }
                     }
                 }
             }

@@ -21,12 +21,13 @@ public class Food {
     public Food(Point location, int energy) {
         this.location = location;
         this.shape = new Circle(location, 10, Color.GREEN);
+        this.energy = energy;
     }
 
     public void setExists(boolean exists) {
         this.exists = exists;
         if (!exists) {
-            shape = new Circle(location, 10, Color.GRAY);
+            shape = null;
         }
     }
 
@@ -39,6 +40,8 @@ public class Food {
     }
 
     public void draw(Graphics g) {
-        shape.draw(g);
+        if (shape != null) {
+            shape.draw(g);
+        }
     }
 }

@@ -12,6 +12,7 @@ public class EvolutionSimulator {
     List<Food> foods = new ArrayList<>();
     Random rand = new Random();
     Point fieldSize = new Point(400, 400);
+    ExecutorService executorService = Executors.newCachedThreadPool();
 
     public List<Creature> getCreatures() {
         return creatures;
@@ -25,16 +26,22 @@ public class EvolutionSimulator {
         return new Point(rand.nextInt(sizeX), rand.nextInt(sizeY));
     }
 
+    public void addCreature(Creature c) {
+        synchronized (creatures) {
+            creatures.add(c);
+        }
+        executorService.execute(c);
+    }
+
     public EvolutionSimulator(int creaturesNumber, int foodNumber) {
-        ExecutorService exec = Executors.newFixedThreadPool(10);
         final int foodEnergy = 50;
         for(int i = 0; i < foodNumber; i++) {
             foods.add(new Food(randomPoint(400,400), foodEnergy));
         }
         for(int i = 0; i < creaturesNumber; i++) {
-            creatures.add(new Creature(this, randomPoint(400, 400), new Dna(5, 10, 50)));
+            creatures.add(new Creature(this, randomPoint(400, 400), new Dna(5, 10, 200)));
         }
-        creatures.forEach(exec::execute);
+        creatures.forEach(executorService::execute);
     }
 
     public Point getFieldSize() {

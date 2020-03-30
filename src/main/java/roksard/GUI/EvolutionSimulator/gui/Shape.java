@@ -6,4 +6,5 @@ public interface Shape {
     public void draw(Graphics g);
     public Point getLocation();
     public void setLocation(Point location);
+    public void setSize(double size);
 }

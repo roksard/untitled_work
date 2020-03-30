@@ -4,7 +4,7 @@ import java.awt.*;
 import java.awt.geom.Ellipse2D;
 
 public class Circle implements Shape {
-    int size;
+    double size;
     Point location;
 
     public Point getLocation() {
@@ -17,7 +17,7 @@ public class Circle implements Shape {
 
     Color color;
 
-    public Circle(Point location, int size, Color color) {
+    public Circle(Point location, double size, Color color) {
         this.location = new Point(location);
         this.size = size;
         this.color = color;
@@ -39,4 +39,7 @@ public class Circle implements Shape {
         g2d.fill(circle);
     }
 
+    public void setSize(double size) {
+        this.size = size;
+    }
 }
