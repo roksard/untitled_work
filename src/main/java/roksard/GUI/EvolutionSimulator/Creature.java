@@ -58,8 +58,8 @@ public class Creature implements Runnable {
         do {
             double x = location.getX();
             double y = location.getY();
-            int deltaX = rand.nextInt(dna.speed * 2) - dna.speed;
-            int deltaY = rand.nextInt(dna.speed * 2) - dna.speed;
+            int deltaX = rand.nextInt(dna.speed * 2 + 1) - dna.speed;
+            int deltaY = rand.nextInt(dna.speed * 2 + 1) - dna.speed;
             newX = x + deltaX;
             newY = y + deltaY;
         } while (newX < 0 || newX > simulator.getFieldSize().getX()
