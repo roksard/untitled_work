@@ -12,7 +12,7 @@ public class Creature implements Runnable {
     private Shape shape;
     private Point location;
     Random rand = new Random();
-    int energy = 100;
+    double energy = 100;
     private Dna dna;
     private EvolutionSimulator simulator;
     State state = State.WANDER;
@@ -77,7 +77,7 @@ public class Creature implements Runnable {
         newX = rangeLimit(0, simulator.getFieldSize().getX(), location.getX() + deltaX);
         newY = rangeLimit(0, simulator.getFieldSize().getY(), location.getY() + deltaY);
         location.setLocation(newX, newY);
-        addEnergy(-1);
+        addEnergy(walkEnergy());
         updateShape();
     }
 
@@ -87,26 +87,33 @@ public class Creature implements Runnable {
         } else {
             this.location.setLocation(GeometryUtils.getPointOnVector(this.location, location, dna.speed));
         }
-        addEnergy(-1);
+        addEnergy(walkEnergy());
         updateShape();
     }
 
-    private void addEnergy(int deltaEnergy) {
+    private double walkEnergy() {
+        return -this.dna.size * this.dna.speed * this.dna.speed * 0.01;
+    }
+
+    private void addEnergy(double deltaEnergy) {
         this.energy += deltaEnergy;
         if (this.energy <= 0) {
             this.isAlive = false;
             updateShape();
         } else if (this.energy > 200) {
             Dna newDna = new Dna(this.dna);
-            int mutation = rand.nextInt(10);
+            final double mutationMultiplier = 0.5; //how strong a mutation is against current value
+            final int mutationProbability = 50; //in % approx
+            int mutation = rand.nextInt(100 / mutationProbability + 3);
+
             if (mutation == 1) {
-                newDna.speed = newDna.speed + rand.nextDouble() * newDna.speed / 10;
+                newDna.speed = newDna.speed + (rand.nextDouble()-0.5) * newDna.speed * mutationMultiplier;
             }
             if (mutation == 2) {
-                newDna.senseRadius = newDna.senseRadius + rand.nextDouble() * newDna.senseRadius / 10;
+                newDna.senseRadius = newDna.senseRadius + (rand.nextDouble()-0.5) * newDna.senseRadius * mutationMultiplier;
             }
             if (mutation == 3) {
-                newDna.size = newDna.size + rand.nextDouble() * newDna.size / 10;
+                newDna.size = newDna.size + (rand.nextDouble()-0.5) * newDna.size * mutationMultiplier;
             }
             simulator.addCreature(new Creature(simulator, this.location, newDna));
             addEnergy(-100);
