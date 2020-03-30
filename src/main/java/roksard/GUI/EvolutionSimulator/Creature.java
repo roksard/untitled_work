@@ -45,7 +45,7 @@ public class Creature implements Runnable {
     private Optional<Food> findClosestFood() {
         double min = -1;
         Food minF = null;
-        for(Food food : simulator.getFoods()) {
+        for(Food food : simulator.getFoods()) { // TODO FIX ConcurrentModificationException
             double dist = food.getLocation().distance(this.location);
             synchronized (food) {
                 if (food.isExists() && (min == -1 || dist < min)) {
