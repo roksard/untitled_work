@@ -11,6 +11,7 @@ public class EvolutionSimulator {
     List<Creature> creatures = new ArrayList<>();
     List<Food> foods = new ArrayList<>();
     Random rand = new Random();
+    Point fieldSize = new Point(400, 400);
 
     public List<Creature> getCreatures() {
         return creatures;
@@ -31,8 +32,12 @@ public class EvolutionSimulator {
             foods.add(new Food(randomPoint(400,400), foodEnergy));
         }
         for(int i = 0; i < creaturesNumber; i++) {
-            creatures.add(new Creature(this, randomPoint(400, 400), new Dna(1, 10, 100)));
+            creatures.add(new Creature(this, randomPoint(400, 400), new Dna(5, 10, 50)));
         }
         creatures.forEach(exec::execute);
+    }
+
+    public Point getFieldSize() {
+        return fieldSize;
     }
 }

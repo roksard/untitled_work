@@ -35,6 +35,6 @@ public class Main {
             public void run() {
                 frame.repaint();
             }
-        }, 100, 100);
+        }, 100, 10);
     }
 }

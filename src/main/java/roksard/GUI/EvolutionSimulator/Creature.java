@@ -2,6 +2,7 @@ package roksard.GUI.EvolutionSimulator;
 
 import roksard.GUI.EvolutionSimulator.gui.Circle;
 import roksard.GUI.EvolutionSimulator.gui.Shape;
+import roksard.util.GeometryUtils;
 
 import java.awt.*;
 import java.util.Optional;
@@ -53,9 +54,17 @@ public class Creature implements Runnable {
     }
 
     private void walk() {
-        int deltaX = rand.nextInt(dna.speed * 2) - dna.speed;
-        int deltaY = rand.nextInt(dna.speed * 2) - dna.speed;
-        location.setLocation(location.getX() + deltaX, location.getY() + deltaY);
+        double newX, newY;
+        do {
+            double x = location.getX();
+            double y = location.getY();
+            int deltaX = rand.nextInt(dna.speed * 2) - dna.speed;
+            int deltaY = rand.nextInt(dna.speed * 2) - dna.speed;
+            newX = x + deltaX;
+            newY = y + deltaY;
+        } while (newX < 0 || newX > simulator.getFieldSize().getX()
+                || newY < 0 || newY > simulator.getFieldSize().getY());
+        location.setLocation(newX, newY);
         updateShape();
     }
 
