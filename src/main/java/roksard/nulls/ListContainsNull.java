@@ -15,3 +15,10 @@ public class ListContainsNull {
         System.out.println("4:" + list.contains(null));
     }
 }
+
+/* Output
+1:false
+2:true
+3:false
+4:true
+ */
