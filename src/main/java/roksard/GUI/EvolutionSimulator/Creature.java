@@ -45,12 +45,14 @@ public class Creature implements Runnable {
     private Optional<Food> findClosestFood() {
         double min = -1;
         Food minF = null;
-        for(Food food : simulator.getFoods()) { // TODO FIX ConcurrentModificationException
-            double dist = food.getLocation().distance(this.location);
-            synchronized (food) {
-                if (food.isExists() && (min == -1 || dist < min)) {
-                    min = dist;
-                    minF = food;
+        synchronized (simulator.getFoods()) {
+            for (Food food : simulator.getFoods()) {
+                double dist = food.getLocation().distance(this.location);
+                synchronized (food) {
+                    if (food.isExists() && (min == -1 || dist < min)) {
+                        min = dist;
+                        minF = food;
+                    }
                 }
             }
         }
@@ -95,10 +97,18 @@ public class Creature implements Runnable {
         return -this.dna.size * this.dna.speed * this.dna.speed * 0.01;
     }
 
+    public boolean isAlive() {
+        return isAlive;
+    }
+
     private void addEnergy(double deltaEnergy) {
         this.energy += deltaEnergy;
         if (this.energy <= 0) {
-            this.isAlive = false;
+            synchronized (simulator.getCreatures()) {
+                synchronized (this) {
+                    this.isAlive = false;
+                }
+            }
             updateShape();
         } else if (this.energy > 200) {
             Dna newDna = new Dna(this.dna);
@@ -107,13 +117,13 @@ public class Creature implements Runnable {
             int mutation = rand.nextInt(100 / mutationProbability + 3);
 
             if (mutation == 1) {
-                newDna.speed = newDna.speed + (rand.nextDouble()-0.5) * newDna.speed * mutationMultiplier;
+                newDna.speed = rangeLimit(1, 50, newDna.speed + (rand.nextDouble()-0.5) * newDna.speed * mutationMultiplier);
             }
             if (mutation == 2) {
-                newDna.senseRadius = newDna.senseRadius + (rand.nextDouble()-0.5) * newDna.senseRadius * mutationMultiplier;
+                newDna.senseRadius = rangeLimit(0, 1000, newDna.senseRadius + (rand.nextDouble()-0.5) * newDna.senseRadius * mutationMultiplier);
             }
             if (mutation == 3) {
-                newDna.size = newDna.size + (rand.nextDouble()-0.5) * newDna.size * mutationMultiplier;
+                newDna.size = rangeLimit(1, 30, newDna.size + (rand.nextDouble()-0.5) * newDna.size * mutationMultiplier);
             }
             simulator.addCreature(new Creature(simulator, this.location, newDna));
             addEnergy(-100);
@@ -124,7 +134,7 @@ public class Creature implements Runnable {
     public void run() {
         try {
             while (!Thread.interrupted() && isAlive) {
-                Thread.sleep(100);
+                Thread.sleep(2);
                 if (state == State.WANDER) {
                     walk();
                     Optional<Food> closestFood = findClosestFood();
@@ -161,7 +171,7 @@ public class Creature implements Runnable {
                     }
                 }
             }
-        } catch (InterruptedException e) {
+        } catch (Throwable e) {
 
         }
     }

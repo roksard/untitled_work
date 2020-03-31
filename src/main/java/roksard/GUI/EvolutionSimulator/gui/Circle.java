@@ -40,6 +40,10 @@ public class Circle implements Shape {
     }
 
     public void setSize(double size) {
-        this.size = size;
+        if (size < 3) {
+            this.size = 3;
+        } else {
+            this.size = size;
+        }
     }
 }

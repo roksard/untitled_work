@@ -2,16 +2,32 @@ package roksard.GUI.EvolutionSimulator;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.WindowEvent;
 import java.awt.geom.Ellipse2D;
 import java.util.Comparator;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.stream.Collectors;
 
 public class Main {
     public static void main(String[] args) {
         EvolutionSimulator simulator = new EvolutionSimulator(10, 40);
 
-        JFrame frame = new JFrame();
+        JFrame frame = new JFrame() {
+            @Override
+            protected void processEvent(AWTEvent e) {
+                super.processEvent(e);
+                if (WindowEvent.WINDOW_ACTIVATED == e.getID()) {
+                    synchronized (simulator.getFoods()) {
+                        System.out.println(simulator.getFoods());
+                    }
+                    synchronized (simulator.getCreatures()) {
+                        System.out.println(simulator.getCreatures());
+                    }
+                }
+            }
+        };
         frame.add(new JPanel() {
             {
                 setBackground(Color.BLACK);
@@ -28,7 +44,15 @@ public class Main {
                     simulator.getCreatures().sort(new Comparator<Creature>() {
                         @Override
                         public int compare(Creature o1, Creature o2) {
-                            return Boolean.compare(o1.isAlive, o2.isAlive);
+                            boolean alive1;
+                            boolean alive2;
+                            synchronized (o1) {
+                                alive1 = o1.isAlive;
+                            }
+                            synchronized (o2) {
+                                alive2 = o2.isAlive;
+                            }
+                            return Boolean.compare(alive1, alive2);
                         }
                     });
                     simulator.getCreatures().forEach(creature -> creature.draw(g));
@@ -52,11 +76,33 @@ public class Main {
             @Override
             public void run() {
                 synchronized (simulator.getFoods()) {
-                    for (int i = 0; i < 10; i++) {
+                    for (int i = 0; i < 5; i++) {
                         simulator.getFoods().add(simulator.randomFood());
                     }
                 }
             }
-        }, 5000, 5000);
+        }, 1, 1);
+
+        new Timer().schedule(new TimerTask() {
+            @Override
+            public void run() {
+                synchronized (simulator.getFoods()) {
+                    List<Food> newFood = simulator.getFoods().stream()
+                            .filter(food -> food.isExists())
+                            .collect(Collectors.toList());
+                    simulator.getFoods().clear();
+                    simulator.getFoods().addAll(newFood);
+                }
+                synchronized (simulator.getCreatures()) {
+                    List<Creature> newCreatures = simulator.getCreatures().stream()
+                            .filter(creature -> creature.isAlive())
+                            .collect(Collectors.toList());
+                    simulator.getCreatures().clear();
+                    simulator.getCreatures().addAll(newCreatures);
+                }
+            }
+        }, 20000, 20000);
+
+
     }
 }
