@@ -3,16 +3,14 @@ package roksard.GUI.EvolutionSimulator;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.WindowEvent;
-import java.awt.geom.Ellipse2D;
-import java.util.Comparator;
+import java.util.*;
 import java.util.List;
 import java.util.Timer;
-import java.util.TimerTask;
 import java.util.stream.Collectors;
 
 public class Main {
     public static void main(String[] args) {
-        EvolutionSimulator simulator = new EvolutionSimulator(10, 40);
+        EvolutionSimulator simulator = new EvolutionSimulator(5, 200);
 
         JFrame frame = new JFrame() {
             @Override
@@ -20,10 +18,10 @@ public class Main {
                 super.processEvent(e);
                 if (WindowEvent.WINDOW_ACTIVATED == e.getID()) {
                     synchronized (simulator.getFoods()) {
-                        System.out.println(simulator.getFoods());
+//                        System.out.println(simulator.getFoods());
                     }
                     synchronized (simulator.getCreatures()) {
-                        System.out.println(simulator.getCreatures());
+//                        System.out.println(simulator.getCreatures());
                     }
                 }
             }
@@ -47,10 +45,10 @@ public class Main {
                             boolean alive1;
                             boolean alive2;
                             synchronized (o1) {
-                                alive1 = o1.isAlive;
+                                alive1 = o1.isAlive();
                             }
                             synchronized (o2) {
-                                alive2 = o2.isAlive;
+                                alive2 = o2.isAlive();
                             }
                             return Boolean.compare(alive1, alive2);
                         }
@@ -65,25 +63,27 @@ public class Main {
         frame.setVisible(true);
         frame.repaint();
 
-        new Timer().schedule(new TimerTask() {
+        List<Timer> timers = new ArrayList<>(Arrays.asList(new Timer(), new Timer(), new Timer()));
+        int tid = 0;
+        timers.get(tid++).schedule(new TimerTask() {
             @Override
             public void run() {
                 frame.repaint();
             }
         }, 100, 10);
 
-        new Timer().schedule(new TimerTask() {
+        timers.get(tid++).schedule(new TimerTask() {
             @Override
             public void run() {
                 synchronized (simulator.getFoods()) {
-                    for (int i = 0; i < 5; i++) {
+                    for (int i = 0; i < 1; i++) {
                         simulator.getFoods().add(simulator.randomFood());
                     }
                 }
             }
-        }, 1, 1);
+        }, 0, simulator.tick);
 
-        new Timer().schedule(new TimerTask() {
+        timers.get(tid++).schedule(new TimerTask() {
             @Override
             public void run() {
                 synchronized (simulator.getFoods()) {
@@ -98,11 +98,14 @@ public class Main {
                             .filter(creature -> creature.isAlive())
                             .collect(Collectors.toList());
                     simulator.getCreatures().clear();
+                    if (newCreatures.size() == 0) {
+                        simulator.log.log("stopping simulator");
+                        simulator.shutdownNow();
+                        timers.forEach(Timer::cancel);
+                    }
                     simulator.getCreatures().addAll(newCreatures);
                 }
             }
-        }, 20000, 20000);
-
-
+        }, simulator.tick * 120 + 20000, simulator.tick * 120 + 20000);
     }
 }

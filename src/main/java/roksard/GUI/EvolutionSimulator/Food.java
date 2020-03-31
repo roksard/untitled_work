@@ -21,7 +21,7 @@ public class Food {
 
     public Food(Point location, int energy) {
         this.location = location;
-        this.shape = new Circle(location, 10, Color.GREEN);
+        this.shape = new Circle(location, 5, Color.GREEN);
         this.energy = energy;
     }
 
