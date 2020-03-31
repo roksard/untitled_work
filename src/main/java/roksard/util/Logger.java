@@ -8,6 +8,7 @@ import java.util.Arrays;
 
 public class Logger {
     private String prefix;
+    private boolean isDisabled = false;
 
     public static Logger getLogger(String prefix) {
         return new Logger(prefix);
@@ -23,9 +24,15 @@ public class Logger {
                 ZoneId.systemDefault()));
     }
 
+    public void setDisabled(boolean disabled) {
+        isDisabled = disabled;
+    }
+
     public void log(Object... toPrint) {
-        System.out.println(timestamp() + " --" + prefix + "-- " + Arrays.stream(toPrint)
-                .map(Object::toString)
-                .reduce("", (a, b) -> a + " " + b));
+        if (!isDisabled) {
+            System.out.println(timestamp() + " --" + prefix + "-- " + Arrays.stream(toPrint)
+                    .map(Object::toString)
+                    .reduce("", (a, b) -> a + " " + b));
+        }
     }
 }
