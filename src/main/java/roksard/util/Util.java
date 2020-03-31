@@ -42,4 +42,13 @@ public class Util {
                 ZoneId.systemDefault()));
     }
 
+    public static double rangeLimit(double from, double to, double value) {
+        double result = value;
+        if (result < from)
+            result = from;
+        else if(result > to)
+            result = to;
+        return result;
+    }
+
 }
