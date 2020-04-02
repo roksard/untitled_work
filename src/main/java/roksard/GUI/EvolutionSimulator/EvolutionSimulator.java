@@ -11,7 +11,7 @@ import java.util.concurrent.Executors;
 
 public class EvolutionSimulator {
     Logger log = Logger.getLogger("evo-sim");
-    public final int tick = 1;
+    public final int tick = 50;
     List<Creature> creatures = new ArrayList<>();
     List<Food> foods = new ArrayList<>();
     Random rand = new Random();

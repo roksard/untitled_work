@@ -63,7 +63,7 @@ public class Main {
         frame.setVisible(true);
         frame.repaint();
 
-        List<Timer> timers = new ArrayList<>(Arrays.asList(new Timer(), new Timer(), new Timer()));
+        List<Timer> timers = new ArrayList<>(Arrays.asList(new Timer(), new Timer(), new Timer(), new Timer()));
         int tid = 0;
         timers.get(tid++).schedule(new TimerTask() {
             @Override
@@ -81,7 +81,7 @@ public class Main {
                     }
                 }
             }
-        }, 0, simulator.tick);
+        }, 0, simulator.tick *3);
 
         timers.get(tid++).schedule(new TimerTask() {
             @Override
@@ -107,5 +107,14 @@ public class Main {
                 }
             }
         }, simulator.tick * 120 + 20000, simulator.tick * 120 + 20000);
+
+        timers.get(tid++).schedule(new TimerTask() {
+            @Override
+            public void run() {
+                Creature monster = new Creature(simulator, 4000000, new Point(200, 200), new Dna(10, 20, 50));
+                monster.canReproduce = false;
+                simulator.addCreature(monster);
+            }
+        }, 5000, 30000);
     }
 }

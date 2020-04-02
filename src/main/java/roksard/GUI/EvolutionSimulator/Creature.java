@@ -9,14 +9,15 @@ import java.awt.*;
 import java.util.Optional;
 import java.util.Random;
 import java.util.StringJoiner;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static roksard.util.Util.rangeLimit;
 
 public class Creature implements Runnable {
-    volatile static int count = 0;
-    int id = count++;
-    public Logger log = Logger.getLogger(this.toString());
-    public Logger log2 = Logger.getLogger(this.toString());
+    private static AtomicInteger count = new AtomicInteger(0);
+    private int id = count.getAndIncrement();
+    Logger log = Logger.getLogger(this.toString());
+    Logger log2 = Logger.getLogger(this.toString());
     {
         log.setDisabled(true);
         log2.setDisabled(false);
@@ -31,7 +32,8 @@ public class Creature implements Runnable {
     private static enum State {WANDER, HUNT_FOOD, HUNT_CREATURE}
     private Food foundFood;
     private Creature creatureToEat;
-    private boolean isAlive = true;
+    private volatile boolean isAlive = true;
+    volatile boolean canReproduce = true;
 
     @Override
     public String toString() {
@@ -39,20 +41,31 @@ public class Creature implements Runnable {
     }
 
     public synchronized String toStringEx() {
-        System.out.println(1); //TODO
         StringJoiner j = new StringJoiner("|", "~(", ")")
+                .add(String.format("size %.2f", dna.size))
+                .add(String.format("speed %.2f", dna.speed))
+                .add(String.format("sense %.2f", dna.senseRadius));
+        return "c" + String.format("%06d", id) + j.toString();
+    }
+
+    public synchronized String toCSV() {
+        StringJoiner j = new StringJoiner(";")
                 .add(String.format("%.2f", dna.size))
                 .add(String.format("%.2f", dna.speed))
                 .add(String.format("%.2f", dna.senseRadius));
-        System.out.println(2);
-        return "c" + String.format("%.3d", id) + j.toString();
+        return j.toString();
     }
 
     public Creature(EvolutionSimulator es, Point location, Dna dna) {
+        this(es, 100, location, dna);
+    }
+
+    public Creature(EvolutionSimulator es, int energy, Point location, Dna dna) {
         this.simulator = es;
         this.location = new Point(location);
         this.dna = dna;
         this.shape = new Circle(location, dna.size, Color.RED);
+        this.energy = energy;
     }
 
     private void updateShape() {
@@ -96,7 +109,7 @@ public class Creature implements Runnable {
     }
 
     private synchronized boolean isSmaller(Creature other) {
-        return this.dna.size < (other.dna.size - other.dna.size*0.2);
+        return (this.dna.size + this.dna.size*0.4) < other.dna.size;
     }
 
     private Optional<Creature> findCreatureToEat() {
@@ -117,6 +130,8 @@ public class Creature implements Runnable {
         return Optional.ofNullable(minF);
 
     }
+
+
 
     private void walk() {
         double newX, newY;
@@ -150,6 +165,7 @@ public class Creature implements Runnable {
     public synchronized void setAlive(boolean alive) {
         log.log("setAlive(" + alive +" )");
         isAlive = alive;
+        updateShape();
     }
 
     private void addEnergy(double deltaEnergy) {
@@ -175,10 +191,12 @@ public class Creature implements Runnable {
             if (mutation == 3) {
                 newDna.size = rangeLimit(1, 30, newDna.size + (rand.nextDouble()-0.5) * newDna.size * mutationMultiplier);
             }
-            Creature newBorn = new Creature(simulator, this.location, newDna);
-            log2.log("newBorn ", newBorn.toStringEx()); //TODO fix;
-            simulator.addCreature(newBorn);
-            addEnergy(-100);
+            if (canReproduce) {
+                Creature newBorn = new Creature(simulator, this.location, newDna);
+                log2.log("newBorn ", newBorn.toStringEx(), " ", newBorn.toCSV());
+                simulator.addCreature(newBorn);
+                addEnergy(-100);
+            }
         }
     }
 
@@ -245,7 +263,7 @@ public class Creature implements Runnable {
             creatureToEat = null;
             state = State.WANDER;
         } else {
-            if (creatureToEat.location.distance(location) < 1) {
+            if (creatureToEat.location.distance(location) < 2) {
                 //eat
                 log.log("wait1");
                 double energyToAdd = 0;
