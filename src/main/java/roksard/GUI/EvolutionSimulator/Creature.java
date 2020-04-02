@@ -114,7 +114,7 @@ public class Creature implements Runnable {
     }
 
     private synchronized boolean isSmaller(Creature other) {
-        return (this.dna.size + this.dna.size*0.4) < other.dna.size;
+        return (this.dna.size + this.dna.size*0.5) < other.dna.size;
     }
 
     private Optional<Creature> findCreatureToEat() {
