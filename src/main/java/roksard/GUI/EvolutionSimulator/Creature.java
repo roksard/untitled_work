@@ -22,6 +22,11 @@ public class Creature implements Runnable {
         log.setDisabled(true);
         log2.setDisabled(false);
     };
+
+    public void setShape(Shape shape) {
+        this.shape = shape;
+    }
+
     private Shape shape;
     private Point location;
     private Random rand = new Random();

@@ -1,5 +1,7 @@
 package roksard.GUI.EvolutionSimulator;
 
+import roksard.GUI.EvolutionSimulator.gui.Circle;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.WindowEvent;
@@ -113,6 +115,7 @@ public class Main {
             public void run() {
                 Creature monster = new Creature(simulator, 4000000, new Point(200, 200), new Dna(10, 20, 50));
                 monster.canReproduce = false;
+                monster.setShape(new Circle(monster.getLocation(), 20, Color.YELLOW));
                 simulator.addCreature(monster);
             }
         }, 5000);
