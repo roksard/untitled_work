@@ -81,7 +81,7 @@ public class Main {
                     }
                 }
             }
-        }, 0, simulator.tick *3);
+        }, 0, simulator.tick);
 
         timers.get(tid++).schedule(new TimerTask() {
             @Override
@@ -115,6 +115,6 @@ public class Main {
                 monster.canReproduce = false;
                 simulator.addCreature(monster);
             }
-        }, 5000, 30000);
+        }, 5000);
     }
 }
