@@ -17,10 +17,8 @@ public class Creature implements Runnable {
     private static AtomicInteger count = new AtomicInteger(0);
     private int id = count.getAndIncrement();
     Logger log = Logger.getLogger(this.toString());
-    Logger log2 = Logger.getLogger(this.toString());
     {
-        log.setDisabled(true);
-        log2.setDisabled(false);
+        log.setDisabled(false);
     };
 
     public void setShape(Shape shape) {
@@ -30,7 +28,8 @@ public class Creature implements Runnable {
     private Shape shape;
     private Point location;
     private Random rand = new Random();
-    private double energy = 100;
+    volatile private double energy = 100;
+    private double reproduceThreshold = 200;
     private Dna dna;
     private EvolutionSimulator simulator;
     private State state = State.WANDER;
@@ -45,7 +44,7 @@ public class Creature implements Runnable {
         return "c" + id;
     }
 
-    public synchronized String toStringEx() {
+    public String toStringEx() {
         StringJoiner j = new StringJoiner("|", "~(", ")")
                 .add(String.format("size %.2f", dna.size))
                 .add(String.format("speed %.2f", dna.speed))
@@ -53,7 +52,7 @@ public class Creature implements Runnable {
         return "c" + String.format("%06d", id) + j.toString();
     }
 
-    public synchronized String toCSV() {
+    public String toCSV() {
         StringJoiner j = new StringJoiner(";")
                 .add(String.format("%.2f", dna.size))
                 .add(String.format("%.2f", dna.speed))
@@ -65,12 +64,17 @@ public class Creature implements Runnable {
         this(es, 100, location, dna);
     }
 
-    public Creature(EvolutionSimulator es, int energy, Point location, Dna dna) {
+    public Creature(EvolutionSimulator es, double energy, Point location, Dna dna) {
+        this(es, energy, location, dna, 200);
+    }
+
+    public Creature(EvolutionSimulator es, double energy, Point location, Dna dna, double reproduceThreshold) {
         this.simulator = es;
         this.location = new Point(location);
         this.dna = dna;
         this.shape = new Circle(location, dna.size, Color.RED);
         this.energy = energy;
+        this.reproduceThreshold = reproduceThreshold;
     }
 
     private void updateShape() {
@@ -113,8 +117,8 @@ public class Creature implements Runnable {
         return location;
     }
 
-    private synchronized boolean isSmaller(Creature other) {
-        return (this.dna.size + this.dna.size*0.5) < other.dna.size;
+    private boolean isSmaller(Creature other) {
+        return (this.dna.size + this.dna.size) < other.dna.size;
     }
 
     private Optional<Creature> findCreatureToEat() {
@@ -163,44 +167,56 @@ public class Creature implements Runnable {
         return -this.dna.size * this.dna.speed * this.dna.speed * 0.005;
     }
 
-    public synchronized boolean isAlive() {
+    public boolean isAlive() {
         return isAlive;
     }
 
-    public synchronized void setAlive(boolean alive) {
-        log.log("setAlive(" + alive +" )");
-        isAlive = alive;
+    public void setAlive(boolean alive) {
+        if (isAlive() && !alive) {
+            synchronized (simulator) {
+                simulator.getAliveCreatures().decrementAndGet();
+                simulator.setCreaturesSize(simulator.getCreaturesSize() - Math.pow(this.getDna().size, 2));
+            }
+        }
+        synchronized (simulator.getCreatures()) {
+            isAlive = alive;
+        }
         updateShape();
     }
 
     private void addEnergy(double deltaEnergy) {
-        log.log("addEnergy(" + deltaEnergy + ") = " + energy);
-        this.energy += deltaEnergy;
-        if (this.energy <= 0) {
+        energy += deltaEnergy;
+        if (energy <= 0) {
             synchronized (simulator.getCreatures()) {
                 setAlive(false);
             }
             updateShape();
-        } else if (this.energy > 200) {
-            Dna newDna = new Dna(this.dna);
+        } else if (energy > reproduceThreshold) {
+            Dna newDna = new Dna(dna);
             final double mutationMultiplier = 0.5; //how strong a mutation is against current value
             final int mutationProbability = 50; //in % approx
             int mutation = rand.nextInt(100 / mutationProbability + 3);
 
             if (mutation == 1) {
-                newDna.speed = rangeLimit(1, 50, newDna.speed + (rand.nextDouble()-0.5) * newDna.speed * mutationMultiplier);
+                newDna.speed = rangeLimit(0.01, 50, newDna.speed + (rand.nextDouble()-0.5) * newDna.speed * mutationMultiplier);
             }
             if (mutation == 2) {
                 newDna.senseRadius = rangeLimit(0, 1000, newDna.senseRadius + (rand.nextDouble()-0.5) * newDna.senseRadius * mutationMultiplier);
             }
             if (mutation == 3) {
-                newDna.size = rangeLimit(1, 30, newDna.size + (rand.nextDouble()-0.5) * newDna.size * mutationMultiplier);
+                newDna.size = rangeLimit(0.01, 30, newDna.size + (rand.nextDouble()-0.5) * newDna.size * mutationMultiplier);
             }
             if (canReproduce) {
-                Creature newBorn = new Creature(simulator, this.location, newDna);
-                log2.log("newBorn ", newBorn.toStringEx(), " ", newBorn.toCSV());
+                if (simulator.getCreatureDensity() > 1) {
+                    setAlive(false);
+                    System.out.print("-");
+                    return;
+                }
+                double energyForNew = energy / 2;
+                Creature newBorn = new Creature(simulator, energyForNew, location, newDna, newDna.size * 100);
+                log.log("new creature " + newBorn.toStringEx());
                 simulator.addCreature(newBorn);
-                addEnergy(-100);
+                addEnergy(-energyForNew);
             }
         }
     }
@@ -222,7 +238,6 @@ public class Creature implements Runnable {
     }
 
     private void huntFood() {
-        log.log("huntFood [" + energy + "]");
         if (foundFood == null) {
             return;
         }
@@ -258,26 +273,21 @@ public class Creature implements Runnable {
         if (creatureToEat == null) {
             return;
         }
-        log.log("huntCreature", creatureToEat);
         boolean keepHunting;
-        synchronized (creatureToEat) {
+        synchronized (simulator.getCreatures()) {
             keepHunting = creatureToEat.isAlive() && creatureToEat.location.distance(location) <= dna.senseRadius;
         }
-        log.log("keepHunting", keepHunting);
         if (!keepHunting) {
             creatureToEat = null;
             state = State.WANDER;
         } else {
             if (creatureToEat.location.distance(location) < 2) {
                 //eat
-                log.log("wait1");
                 double energyToAdd = 0;
-                synchronized (creatureToEat) {
-                    log.log("wait1done");
+                synchronized (simulator.getCreatures()) {
                     if (creatureToEat.isAlive()) {
-                        log.log("creatureToEat.isAlive (eating)");
                         creatureToEat.setAlive(false);
-                        energyToAdd = creatureToEat.dna.size * 10;
+                        energyToAdd = creatureToEat.dna.size * 100;
                     }
                 }
                 state = State.WANDER;
@@ -306,5 +316,9 @@ public class Creature implements Runnable {
         } catch (Throwable e) {
 
         }
+    }
+
+    public Dna getDna() {
+        return dna;
     }
 }

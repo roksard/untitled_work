@@ -1,13 +1,12 @@
 package roksard.GUI.EvolutionSimulator;
 
-import roksard.GUI.EvolutionSimulator.gui.Circle;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.WindowEvent;
-import java.util.*;
 import java.util.List;
 import java.util.Timer;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 public class Main {
@@ -65,7 +64,10 @@ public class Main {
         frame.setVisible(true);
         frame.repaint();
 
-        List<Timer> timers = new ArrayList<>(Arrays.asList(new Timer(), new Timer(), new Timer(), new Timer()));
+        List<Timer> timers = new ArrayList<>();
+        for (int i = 0; i < 5; i++) {
+            timers.add(new Timer());
+        }
         int tid = 0;
         timers.get(tid++).schedule(new TimerTask() {
             @Override
@@ -74,16 +76,29 @@ public class Main {
             }
         }, 100, 10);
 
+        AtomicInteger foodTime = new AtomicInteger(0);
         timers.get(tid++).schedule(new TimerTask() {
             @Override
             public void run() {
+                try {
+                    Thread.sleep(foodTime.get());
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
                 synchronized (simulator.getFoods()) {
-                    for (int i = 0; i < 1; i++) {
+                    for (int i = 0; i < 100; i++) {
                         simulator.getFoods().add(simulator.randomFood());
                     }
                 }
             }
         }, 0, simulator.tick);
+
+        timers.get(tid++).schedule(new TimerTask() {
+            @Override
+            public void run() {
+                foodTime.incrementAndGet();
+            }
+        }, 0, simulator.tick * 100);
 
         timers.get(tid++).schedule(new TimerTask() {
             @Override
@@ -110,14 +125,24 @@ public class Main {
             }
         }, simulator.tick * 120 + 20000, simulator.tick * 120 + 20000);
 
+//        timers.get(tid++).schedule(new TimerTask() {
+//            @Override
+//            public void run() {
+//                Creature monster = new Creature(simulator, 4000000, new Point(200, 200), new Dna(10, 20, 50));
+//                monster.canReproduce = false;
+//                monster.setShape(new Circle(monster.getLocation(), 20, Color.YELLOW));
+//                simulator.addCreature(monster);
+//            }
+//        }, 5000);
+
         timers.get(tid++).schedule(new TimerTask() {
             @Override
             public void run() {
-                Creature monster = new Creature(simulator, 4000000, new Point(200, 200), new Dna(10, 20, 50));
-                monster.canReproduce = false;
-                monster.setShape(new Circle(monster.getLocation(), 20, Color.YELLOW));
-                simulator.addCreature(monster);
+                synchronized (simulator) {
+                    System.out.println("alive creatures: " + simulator.getAliveCreatures().get());
+                    System.out.println("creature density: " + simulator.getCreatureDensity());
+                }
             }
-        }, 5000);
+        }, 5000, 5000);
     }
 }
