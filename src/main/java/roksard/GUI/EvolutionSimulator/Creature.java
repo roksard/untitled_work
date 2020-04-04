@@ -287,7 +287,7 @@ public class Creature implements Runnable {
                 synchronized (simulator.getCreatures()) {
                     if (creatureToEat.isAlive()) {
                         creatureToEat.setAlive(false);
-                        energyToAdd = creatureToEat.dna.size * 100;
+                        energyToAdd = creatureToEat.dna.size * 1000;
                     }
                 }
                 state = State.WANDER;
