@@ -223,19 +223,33 @@ public class Creature implements Runnable {
         }
     }
 
-    private void wander() {
-        walk();
+    boolean tryFindFood() {
         Optional<Food> closestFood = findClosestFood();
         closestFood.ifPresent(food -> {
             state = State.HUNT_FOOD;
             foundFood = food;
         });
-        if (!closestFood.isPresent()) {
-            Optional<Creature> closestCTE = findCreatureToEat();
-            closestCTE.ifPresent(creature -> {
-                state = State.HUNT_CREATURE;
-                this.creatureToEat = creature;
-            });
+        return closestFood.isPresent();
+    }
+
+    boolean tryFindCreatureAsFood() {
+        Optional<Creature> closestCTE = findCreatureToEat();
+        closestCTE.ifPresent(creature -> {
+            state = State.HUNT_CREATURE;
+            this.creatureToEat = creature;
+        });
+        return closestCTE.isPresent();
+    }
+    private void wander() {
+        walk();
+        if (dna.isHunter) {
+            if (!tryFindCreatureAsFood()) {
+                tryFindFood();
+            }
+        } else {
+            if (!tryFindFood()) {
+                tryFindCreatureAsFood();
+            }
         }
     }
 
@@ -251,7 +265,7 @@ public class Creature implements Runnable {
             foundFood = null;
             state = State.WANDER;
         } else {
-            if (foundFood.getLocation().distance(this.location) < 1) {
+            if (foundFood.getLocation().distance(this.location) < dna.size / 2) {
                 //eat
                 foundFood.lock.lock();
                 try {
@@ -283,7 +297,7 @@ public class Creature implements Runnable {
             creatureToEat = null;
             state = State.WANDER;
         } else {
-            if (creatureToEat.location.distance(location) < 2) {
+            if (creatureToEat.location.distance(location) <= this.dna.size / 2 ) {
                 //eat
                 double energyToAdd = 0;
                 synchronized (simulator.getCreatures()) {

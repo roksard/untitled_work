@@ -12,7 +12,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class EvolutionSimulator {
     Logger log = Logger.getLogger("evo-sim");
-    public final int tick = 1;
+    public final int tick = 50;
     AtomicInteger aliveCreatures = new AtomicInteger(0);
     volatile double creaturesSize = 0;
     List<Creature> creatures = new ArrayList<>();
@@ -57,7 +57,7 @@ public class EvolutionSimulator {
             foods.add(randomFood());
         }
         for(int i = 0; i < creaturesNumber; i++) {
-            addCreature(new Creature(this, randomPoint(400, 400), new Dna(5, 10, 20)));
+            addCreature(new Creature(this, randomPoint(400, 400), new Dna(5, 10, 20, false)));
         }
         creatures.forEach(executorService::execute);
     }
