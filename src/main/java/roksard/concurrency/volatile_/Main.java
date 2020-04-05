@@ -2,10 +2,6 @@ package roksard.concurrency.volatile_;
 
 import roksard.util.Logger;
 
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
-
 public class Main {
     public static String someStaticObject = "";
     public static void log(Object obj) {
@@ -14,6 +10,7 @@ public class Main {
 
     public static void main(String[] args) throws InterruptedException {
         new Volatile().test(3);
+        new NoVolatileUsingLockPerTask().test(3);
         new NoVolatileSyncOnOtherCommonObject().test(3);
         new NoVolatileSyncOnOtherObject().test(3);
         new NoVolatileMethod().test(3);
