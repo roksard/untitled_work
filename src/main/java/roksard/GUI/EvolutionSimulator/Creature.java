@@ -4,6 +4,7 @@ import roksard.GUI.EvolutionSimulator.gui.Circle;
 import roksard.GUI.EvolutionSimulator.gui.Shape;
 import roksard.util.GeometryUtils;
 import roksard.util.Logger;
+import roksard.util.Util;
 
 import java.awt.*;
 import java.util.Optional;
@@ -144,8 +145,8 @@ public class Creature implements Runnable {
 
     private void walk() {
         double newX, newY;
-        double deltaX = rand.nextInt((int)Math.round(dna.speed * 2 + 1)) - dna.speed;
-        double deltaY = rand.nextInt((int)Math.round(dna.speed * 2 + 1)) - dna.speed;
+        double deltaX = Util.randomDouble(-dna.speed, dna.speed, rand);
+        double deltaY = Util.randomDouble(-dna.speed, dna.speed, rand);
         newX = rangeLimit(0, simulator.getFieldSize().getX(), location.getX() + deltaX);
         newY = rangeLimit(0, simulator.getFieldSize().getY(), location.getY() + deltaY);
         location.setLocation(newX, newY);
@@ -193,18 +194,21 @@ public class Creature implements Runnable {
             updateShape();
         } else if (energy > reproduceThreshold) {
             Dna newDna = new Dna(dna);
-            final double mutationMultiplier = 0.5; //how strong a mutation is against current value
+            final double mutationMultiplier = 0.2; //how strong a mutation is against current value
             final int mutationProbability = 50; //in % approx
             int mutation = rand.nextInt(100 / mutationProbability + 3);
 
             if (mutation == 1) {
-                newDna.speed = rangeLimit(0.01, 50, newDna.speed + (rand.nextDouble()-0.5) * newDna.speed * mutationMultiplier);
+                newDna.speed = rangeLimit(0.01, 50, newDna.speed
+                        + Util.randomDouble(-newDna.speed * mutationMultiplier, newDna.speed * mutationMultiplier, rand));
             }
             if (mutation == 2) {
-                newDna.senseRadius = rangeLimit(0, 1000, newDna.senseRadius + (rand.nextDouble()-0.5) * newDna.senseRadius * mutationMultiplier);
+                newDna.senseRadius = rangeLimit(0, 1000, newDna.senseRadius
+                        + Util.randomDouble(-newDna.senseRadius * mutationMultiplier, newDna.senseRadius * mutationMultiplier, rand));
             }
             if (mutation == 3) {
-                newDna.size = rangeLimit(0.01, 30, newDna.size + (rand.nextDouble()-0.5) * newDna.size * mutationMultiplier);
+                newDna.size = rangeLimit(0.01, 30, newDna.size
+                        + Util.randomDouble(-newDna.size * mutationMultiplier, newDna.size * mutationMultiplier, rand));
             }
             if (canReproduce) {
                 double energyForNew = energy / 2;
