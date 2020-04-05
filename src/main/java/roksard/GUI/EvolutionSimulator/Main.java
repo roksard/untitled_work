@@ -86,7 +86,7 @@ public class Main {
                     e.printStackTrace();
                 }
                 synchronized (simulator.getFoods()) {
-                    for (int i = 0; i < 100; i++) {
+                    for (int i = 0; i < 10; i++) {
                         simulator.getFoods().add(simulator.randomFood());
                     }
                 }
@@ -98,7 +98,7 @@ public class Main {
             public void run() {
                 foodTime.incrementAndGet();
             }
-        }, 0, simulator.tick * 100);
+        }, 0, simulator.tick * 100000);
 
         timers.get(tid++).schedule(new TimerTask() {
             @Override
