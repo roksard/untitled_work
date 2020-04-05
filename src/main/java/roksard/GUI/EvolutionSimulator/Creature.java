@@ -207,16 +207,14 @@ public class Creature implements Runnable {
                 newDna.size = rangeLimit(0.01, 30, newDna.size + (rand.nextDouble()-0.5) * newDna.size * mutationMultiplier);
             }
             if (canReproduce) {
-                if (simulator.getCreatureDensity() > 1) {
-                    setAlive(false);
-                    System.out.print("-");
-                    return;
-                }
                 double energyForNew = energy / 2;
                 Creature newBorn = new Creature(simulator, energyForNew, location, newDna, newDna.size * 100);
                 log.log("new creature " + newBorn.toStringEx());
                 simulator.addCreature(newBorn);
                 addEnergy(-energyForNew);
+                if (simulator.getCreatureDensity() > 1) {
+                    setAlive(false);
+                }
             }
         }
     }
