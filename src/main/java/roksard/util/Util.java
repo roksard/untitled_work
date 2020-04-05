@@ -4,6 +4,7 @@ import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Random;
 import java.util.concurrent.ThreadFactory;
 
 public class Util {
@@ -51,4 +52,12 @@ public class Util {
         return result;
     }
 
+    public static double randomDouble(double from, double to) {
+        return randomDouble(from, to, new Random());
+    }
+
+    public static double randomDouble(double from, double to, Random rand) {
+        double delta = to - from;
+        return from + delta * rand.nextDouble();
+    }
 }
