@@ -215,7 +215,7 @@ public class Creature implements Runnable {
             }
             if (canReproduce) {
                 double energyForNew = energy / 2;
-                Creature newBorn = new Creature(simulator, energyForNew, location, newDna, newDna.size * 100);
+                Creature newBorn = new Creature(simulator, energyForNew, location, newDna, newDna.size * 20);
                 log.log("new creature " + newBorn.toStringEx());
                 simulator.addCreature(newBorn);
                 addEnergy(-energyForNew);
@@ -306,7 +306,7 @@ public class Creature implements Runnable {
                 synchronized (simulator.getCreatures()) {
                     if (creatureToEat.isAlive()) {
                         creatureToEat.setAlive(false);
-                        energyToAdd = creatureToEat.dna.size * 1000;
+                        energyToAdd = creatureToEat.dna.size * 20;
                     }
                 }
                 state = State.WANDER;

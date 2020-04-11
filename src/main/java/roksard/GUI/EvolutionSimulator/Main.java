@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 
 public class Main {
     public static void main(String[] args) {
-        EvolutionSimulator simulator = new EvolutionSimulator(5, 100, 1, 300);
+        EvolutionSimulator simulator = new EvolutionSimulator(5, 500, 1, 300);
         EntityMaler maler = new EntityMalerNoSort(simulator);
         MainWindow mainWindow = new MainWindow(maler);
 
@@ -53,7 +53,7 @@ public class Main {
             public void run() {
                 foodTime.incrementAndGet();
             }
-        }, 0, simulator.tick * 100000);
+        }, 0, simulator.tick * 1000);
 
         timers.get(++tid).schedule(new TimerTask() {
             @Override
