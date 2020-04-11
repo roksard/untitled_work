@@ -33,7 +33,7 @@ public class Circle implements Shape {
 
     public void draw(Graphics g) {
         Graphics2D g2d = (Graphics2D) g;
-        Ellipse2D.Double circle = new Ellipse2D.Double(location.getX(), location.getY(), size, size);
+        Ellipse2D.Double circle = new Ellipse2D.Double(location.getX()-size/2, location.getY()-size/2, size, size);
 
         g2d.setColor(color);
         g2d.fill(circle);

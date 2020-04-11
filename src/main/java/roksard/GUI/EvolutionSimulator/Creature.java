@@ -119,7 +119,7 @@ public class Creature implements Runnable {
     }
 
     private boolean isSmaller(Creature other) {
-        return (this.dna.size + this.dna.size) < other.dna.size;
+        return (this.dna.size + this.dna.size) <= other.dna.size;
     }
 
     private Optional<Creature> findCreatureToEat() {
@@ -177,6 +177,9 @@ public class Creature implements Runnable {
             synchronized (simulator) {
                 simulator.getAliveCreatures().decrementAndGet();
                 simulator.setCreaturesSize(simulator.getCreaturesSize() - Math.pow(this.getDna().size, 2));
+                synchronized (simulator.getDeadCreatures()) {
+                    simulator.getDeadCreatures().offer(this);
+                }
             }
         }
         synchronized (simulator.getCreatures()) {

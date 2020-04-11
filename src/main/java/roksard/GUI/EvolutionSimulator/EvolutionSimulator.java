@@ -1,5 +1,6 @@
 package roksard.GUI.EvolutionSimulator;
 
+import roksard.util.FixedSizeQueue;
 import roksard.util.Logger;
 
 import java.awt.*;
@@ -12,10 +13,11 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class EvolutionSimulator {
     Logger log = Logger.getLogger("evo-sim");
-    public final int tick = 50;
+    public final int tick;
     AtomicInteger aliveCreatures = new AtomicInteger(0);
     volatile double creaturesSize = 0;
     List<Creature> creatures = new ArrayList<>();
+    FixedSizeQueue<Creature> deadCreatures;
     List<Food> foods = new ArrayList<>();
     Random rand = new Random();
     Point fieldSize = new Point(400, 400);
@@ -52,7 +54,9 @@ public class EvolutionSimulator {
         return new Food(randomPoint(400,400), Food.ENERGY);
     }
 
-    public EvolutionSimulator(int creaturesNumber, int foodNumber) {
+    public EvolutionSimulator(int creaturesNumber, int foodNumber, int tick, int deadCreaturesMaxCount) {
+        deadCreatures = new FixedSizeQueue<>(deadCreaturesMaxCount);
+        this.tick = tick;
         for(int i = 0; i < foodNumber; i++) {
             foods.add(randomFood());
         }
@@ -80,5 +84,9 @@ public class EvolutionSimulator {
 
     public double getCreatureDensity() {
         return creaturesSize / (fieldSize.getX() * fieldSize.getY());
+    }
+
+    public FixedSizeQueue<Creature> getDeadCreatures() {
+        return deadCreatures;
     }
 }

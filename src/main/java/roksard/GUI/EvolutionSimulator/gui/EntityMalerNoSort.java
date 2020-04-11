@@ -13,8 +13,8 @@ public class EntityMalerNoSort extends EntityMaler {
 
     @Override
     public void draw(Graphics g) {
-        synchronized (simulator.getCreatures()) {
-            simulator.getCreatures().stream().filter(creature -> !creature.isAlive()).forEach(creature -> creature.draw(g));
+        synchronized (simulator.getDeadCreatures()) {
+            simulator.getDeadCreatures().forEach(creature -> creature.draw(g));
         }
         synchronized (simulator.getFoods()) {
             simulator.getFoods().forEach(food -> food.draw(g));

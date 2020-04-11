@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 
 public class Main {
     public static void main(String[] args) {
-        EvolutionSimulator simulator = new EvolutionSimulator(5, 200);
+        EvolutionSimulator simulator = new EvolutionSimulator(5, 100, 1, 300);
         EntityMaler maler = new EntityMalerNoSort(simulator);
         MainWindow mainWindow = new MainWindow(maler);
 
@@ -46,7 +46,7 @@ public class Main {
                     }
                 }
             }
-        }, 0, simulator.tick);
+        }, 0, simulator.tick*30);
 
         timers.get(++tid).schedule(new TimerTask() {
             @Override
@@ -64,31 +64,34 @@ public class Main {
                             .collect(Collectors.toList());
                     simulator.getFoods().clear();
                     simulator.getFoods().addAll(newFood);
-                }
-//                synchronized (simulator.getCreatures()) {
-//                    List<Creature> newCreatures = simulator.getCreatures().stream()
-//                            .filter(creature -> creature.isAlive())
-//                            .collect(Collectors.toList());
-//                    simulator.getCreatures().clear();
-//                    if (newCreatures.size() == 0) {
-//                        simulator.log.log("stopping simulator");
-//                        simulator.shutdownNow();
-//                        timers.forEach(Timer::cancel);
-//                    }
-//                    simulator.getCreatures().addAll(newCreatures);
-//                }
-            }
-        }, simulator.tick * 120 + 20000, simulator.tick * 120 + 20000);
 
-        timers.get(++tid).schedule(new TimerTask() {
-            @Override
-            public void run() {
-                Creature monster = new Creature(simulator, 4000000, new Point(200, 200), new Dna(10, 20, 50, true));
-                monster.canReproduce = false;
-                monster.setShape(new Circle(monster.getLocation(), 20, Color.YELLOW));
-                simulator.addCreature(monster);
+                }
+                synchronized (simulator.getCreatures()) {
+                    synchronized (simulator.getDeadCreatures()) {
+                        List<Creature> newCreatures = simulator.getCreatures().stream()
+                                .filter(creature -> creature.isAlive())
+                                .collect(Collectors.toList());
+                        simulator.getCreatures().clear();
+                        if (newCreatures.size() == 0) {
+                            simulator.log.log("stopping simulator");
+                            simulator.shutdownNow();
+                            timers.forEach(Timer::cancel);
+                        }
+                        simulator.getCreatures().addAll(newCreatures);
+                    }
+                }
             }
-        }, 5000);
+        }, 10000, 10000);
+
+//        timers.get(++tid).schedule(new TimerTask() {
+//            @Override
+//            public void run() {
+//                Creature monster = new Creature(simulator, 4000000, new Point(200, 200), new Dna(10, 20, 100, true));
+//                monster.canReproduce = false;
+//                monster.setShape(new Circle(monster.getLocation(), 20, Color.YELLOW));
+//                simulator.addCreature(monster);
+//            }
+//        }, 5000);
 
         timers.get(++tid).schedule(new TimerTask() {
             @Override
