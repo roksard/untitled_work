@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.nio.channels.Channels;
 import java.nio.channels.WritableByteChannel;
 import java.nio.charset.StandardCharsets;
@@ -31,12 +32,19 @@ public class WriteFile implements Runnable {
         try (FileOutputStream fos = new FileOutputStream(file);
              WritableByteChannel channel = Channels.newChannel(fos);
         ) {
-            WriteAdapter out = useNio ? new WriteAdapter(channel) : new WriteAdapter(fos);
-            out.write(timestamp().getBytes(StandardCharsets.UTF_8));
             Instant writeStart = Instant.now();
-            while (ChronoUnit.MILLIS.between(writeStart, Instant.now()) < 5000) {
-                byte[] arr = new byte[] {65,66,67,68};
-                out.write(arr);
+            if (useNio) {
+                channel.write(ByteBuffer.wrap(timestamp().getBytes(StandardCharsets.UTF_8)));
+                while (ChronoUnit.MILLIS.between(writeStart, Instant.now()) < 5000) {
+                    byte[] arr = new byte[]{65, 66, 67, 68};
+                    channel.write(ByteBuffer.wrap(arr));
+                }
+            } else {
+                fos.write(timestamp().getBytes(StandardCharsets.UTF_8));
+                while (ChronoUnit.MILLIS.between(writeStart, Instant.now()) < 5000) {
+                    byte[] arr = new byte[]{65, 66, 67, 68};
+                    fos.write(arr);
+                }
             }
             logger.log(" write successful.");
         } catch (FileNotFoundException e) {
