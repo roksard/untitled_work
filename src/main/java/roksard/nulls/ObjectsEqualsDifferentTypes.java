@@ -29,5 +29,6 @@ public class ObjectsEqualsDifferentTypes{
         System.out.println("6: " + Objects.equals(long_, int_.longValue()));
 
 
+        System.out.println("7: " + Objects.equals(null, 1));
     }
 }
