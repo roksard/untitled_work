@@ -1,13 +1,38 @@
 package roksard.optional;
 
-import java.util.Arrays;
-import java.util.List;
 import java.util.Optional;
 
+class ObjectX {
+    String name;
+    public ObjectX(String name) {
+        this.name = name;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    @Override
+    public String toString() {
+        return "ObjectX{" +
+                "name='" + name + '\'' +
+                '}';
+    }
+}
+
 public class OptionalMap {
+    static void optionalOfOject(ObjectX obj) {
+        System.out.println("optionalOfOject: " + obj);
+
+        String nameObtained = Optional.ofNullable(obj)
+                .map(objLocal -> objLocal.getName())
+                .orElse("-");
+        System.out.println("nameObtained: " + nameObtained);
+    }
+
     public static void main(String[] args) {
-        List<Integer> list = Arrays.asList(3);
-        list = null;
-        System.out.println(Optional.ofNullable(list).map(listo -> String.valueOf(listo.get(0))).orElse("-"));
+        optionalOfOject(null);
+        optionalOfOject(new ObjectX("Johan"));
+
     }
 }
