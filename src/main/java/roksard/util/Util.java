@@ -4,6 +4,7 @@ import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.Random;
 import java.util.concurrent.ThreadFactory;
 
@@ -41,6 +42,14 @@ public class Util {
         Instant time = Instant.now();
         return DateTimeFormatter.ofPattern("HH:mm:ss.SSS").format(ZonedDateTime.ofInstant(time,
                 ZoneId.systemDefault()));
+    }
+
+    public static Instant timerInit() {
+        return Instant.now();
+    }
+
+    public static long timerDiff(Instant inst) {
+        return ChronoUnit.MILLIS.between(inst, Instant.now());
     }
 
     public static double rangeLimit(double from, double to, double value) {
