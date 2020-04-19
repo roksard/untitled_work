@@ -4,10 +4,25 @@ import roksard.GUI.EvolutionSimulator.gui.Circle;
 import roksard.GUI.EvolutionSimulator.gui.Shape;
 
 import java.awt.*;
+import java.util.Objects;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class Food {
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Food food = (Food) o;
+        return exists == food.exists &&
+                location.equals(food.location);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(location, exists);
+    }
+
     public static final int ENERGY = 50;
     private Shape shape;
     private Point location;

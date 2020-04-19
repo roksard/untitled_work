@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 
 public class Main {
     public static void main(String[] args) {
-        EvolutionSimulator simulator = new EvolutionSimulator(5, 500, 1, 300);
+        EvolutionSimulatorHashed simulator = new EvolutionSimulatorHashed(5, 500, 1, 300);
         EntityMaler maler = new EntityMalerNoSort(simulator);
         MainWindow mainWindow = new MainWindow(maler);
 
@@ -40,9 +40,9 @@ public class Main {
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                synchronized (simulator.getFoods()) {
+                synchronized (simulator.getFoodsLock()) {
                     for (int i = 0; i < 10; i++) {
-                        simulator.getFoods().add(simulator.randomFood());
+                        simulator.addFood(simulator.randomFood());
                     }
                 }
             }
@@ -58,7 +58,7 @@ public class Main {
         timers.get(++tid).schedule(new TimerTask() {
             @Override
             public void run() {
-                synchronized (simulator.getFoods()) {
+                synchronized (simulator.getFoodsLock()) {
                     List<Food> newFood = simulator.getFoods().stream()
                             .filter(food -> food.isExists())
                             .collect(Collectors.toList());
@@ -66,7 +66,7 @@ public class Main {
                     simulator.getFoods().addAll(newFood);
 
                 }
-                synchronized (simulator.getCreatures()) {
+                synchronized (simulator.getCreaturesLock()) {
                     synchronized (simulator.getDeadCreatures()) {
                         List<Creature> newCreatures = simulator.getCreatures().stream()
                                 .filter(creature -> creature.isAlive())

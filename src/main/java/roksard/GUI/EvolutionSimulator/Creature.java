@@ -15,8 +15,21 @@ import java.util.concurrent.atomic.AtomicInteger;
 import static roksard.util.Util.rangeLimit;
 
 public class Creature implements Runnable {
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Creature creature = (Creature) o;
+        return id == creature.id;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
+
     private static AtomicInteger count = new AtomicInteger(0);
-    private int id = count.getAndIncrement();
+    int id = count.getAndIncrement();
 
     Logger log = Logger.getLogger(this.toString());
     static Logger logFoodSearchTime = Logger.getLogger("foodSearchTime: ");
@@ -72,18 +85,18 @@ public class Creature implements Runnable {
         this.shape = shape;
     }
 
-    private Shape shape;
-    private Point location;
-    private Random rand = new Random();
+    Shape shape;
+    Point location;
+    Random rand = new Random();
     volatile private double energy = 100;
-    private double reproduceThreshold = 200;
-    private Dna dna;
+    double reproduceThreshold = 200;
+    Dna dna;
     private EvolutionSimulator simulator;
-    private State state = State.WANDER;
-    private static enum State {WANDER, HUNT_FOOD, HUNT_CREATURE}
-    private Food foundFood;
-    private Creature creatureToEat;
-    private volatile boolean isAlive = true;
+    State state = State.WANDER;
+    static enum State {WANDER, HUNT_FOOD, HUNT_CREATURE}
+    Food foundFood;
+    Creature creatureToEat;
+    volatile boolean isAlive = true;
     volatile boolean canReproduce = true;
 
     @Override
@@ -124,7 +137,7 @@ public class Creature implements Runnable {
         this.reproduceThreshold = reproduceThreshold;
     }
 
-    private void updateShape() {
+    void updateShape() {
         if (!isAlive()) {
             shape = new Circle(this.location, this.dna.size, Color.GRAY);
         } else {
@@ -139,7 +152,7 @@ public class Creature implements Runnable {
         }
     }
 
-    private Optional<Food> findClosestFood() {
+    Optional<Food> findClosestFood() {
         Instant start = Util.timerInit();
         double min = -1;
         Food minF = null;
@@ -166,11 +179,11 @@ public class Creature implements Runnable {
         return location;
     }
 
-    private boolean isSmaller(Creature other) {
+    boolean isSmaller(Creature other) {
         return (this.dna.size + this.dna.size) <= other.dna.size;
     }
 
-    private Optional<Creature> findCreatureToEat() {
+    Optional<Creature> findCreatureToEat() {
         Instant start = Util.timerInit();
         double min = -1;
         Creature minF = null;
@@ -192,7 +205,7 @@ public class Creature implements Runnable {
 
 
 
-    private void walk() {
+    void walk() {
         double newX, newY;
         double deltaX = Util.randomDouble(-dna.speed, dna.speed, rand);
         double deltaY = Util.randomDouble(-dna.speed, dna.speed, rand);
@@ -203,7 +216,7 @@ public class Creature implements Runnable {
         updateShape();
     }
 
-    private void walk(Point location) {
+    void walk(Point location) {
         if (this.location.distance(location) <= dna.speed) {
             this.location.setLocation(location);
         } else {
@@ -213,7 +226,7 @@ public class Creature implements Runnable {
         updateShape();
     }
 
-    private double walkEnergy() {
+    double walkEnergy() {
         return -this.dna.size * this.dna.speed * this.dna.speed * 0.005;
     }
 
@@ -237,7 +250,7 @@ public class Creature implements Runnable {
         updateShape();
     }
 
-    private void addEnergy(double deltaEnergy) {
+    void addEnergy(double deltaEnergy) {
         energy += deltaEnergy;
         if (energy <= 0) {
             synchronized (simulator.getCreatures()) {
@@ -292,7 +305,7 @@ public class Creature implements Runnable {
         });
         return closestCTE.isPresent();
     }
-    private void wander() {
+    void wander() {
         walk();
         if (dna.isHunter) {
             if (!tryFindCreatureAsFood()) {
@@ -305,7 +318,7 @@ public class Creature implements Runnable {
         }
     }
 
-    private void huntFood() {
+    void huntFood() {
         if (foundFood == null) {
             return;
         }
@@ -337,7 +350,7 @@ public class Creature implements Runnable {
         }
     }
 
-    private void huntCreature() {
+    void huntCreature() {
         if (creatureToEat == null) {
             return;
         }
