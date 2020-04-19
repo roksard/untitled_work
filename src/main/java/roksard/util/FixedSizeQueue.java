@@ -10,6 +10,37 @@ public class FixedSizeQueue<T> implements Iterable<T>{
     int currentSize = 0;
     int nextInsert = 0;
 
+    static class Synchronized<T> extends FixedSizeQueue<T> {
+        public Synchronized(int size) {
+            super(size);
+        }
+
+        public Synchronized(FixedSizeQueue queue) {
+            super(queue.fullSize);
+            array = queue.array;
+        }
+
+        @Override
+        synchronized public Iterator<T> iterator() {
+            return super.iterator();
+        }
+
+        @Override
+        synchronized public void forEach(Consumer<? super T> action) {
+            super.forEach(action);
+        }
+
+        @Override
+        synchronized public void offer(T t) {
+            super.offer(t);
+        }
+
+        @Override
+        synchronized public void addAll(Collection<?> c) {
+            super.addAll(c);
+        }
+    }
+
     public FixedSizeQueue(int size) {
         fullSize = size;
         array = new Object[size];
@@ -48,6 +79,10 @@ public class FixedSizeQueue<T> implements Iterable<T>{
 
     public void addAll(Collection<?> c) {
         c.forEach(item -> offer((T)item));
+    }
+
+    public FixedSizeQueue<T> asSynchronized() {
+        return new FixedSizeQueue.Synchronized<T>(this);
     }
 
     public static void main(String[] args) {
