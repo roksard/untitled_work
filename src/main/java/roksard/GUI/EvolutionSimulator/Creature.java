@@ -2,14 +2,14 @@ package roksard.GUI.EvolutionSimulator;
 
 import roksard.GUI.EvolutionSimulator.gui.Circle;
 import roksard.GUI.EvolutionSimulator.gui.Shape;
+import roksard.util.FixedSizeQueue;
 import roksard.util.GeometryUtils;
 import roksard.util.Logger;
 import roksard.util.Util;
 
 import java.awt.*;
-import java.util.Optional;
-import java.util.Random;
-import java.util.StringJoiner;
+import java.time.Instant;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static roksard.util.Util.rangeLimit;
@@ -17,10 +17,56 @@ import static roksard.util.Util.rangeLimit;
 public class Creature implements Runnable {
     private static AtomicInteger count = new AtomicInteger(0);
     private int id = count.getAndIncrement();
+
     Logger log = Logger.getLogger(this.toString());
+    static Logger logFoodSearchTime = Logger.getLogger("foodSearchTime: ");
+    static Logger logCreatureSearchTime = Logger.getLogger("creatureSearchTime: ");
+    static ArrayList<Long> totalAvgCST = new ArrayList<>();
+    static ArrayList<Long> totalAvgFST = new ArrayList<>();
     {
-        log.setDisabled(false);
-    };
+        log.setDisabled(true);
+    }
+
+    final static FixedSizeQueue<Long> foodSearchTime = FixedSizeQueue.synchronizedQueue(new FixedSizeQueue<Long>(100));
+    final static FixedSizeQueue<Long> creatureSearchTime = FixedSizeQueue.synchronizedQueue(new FixedSizeQueue<Long>(100));
+    static Timer searchTimeLogger = new Timer() {{
+        schedule(new TimerTask() {
+            @Override
+            public void run() {
+                long avgFoodSearchTime = 0;
+                synchronized (foodSearchTime) {
+                    for (long time : foodSearchTime) {
+                        avgFoodSearchTime += time;
+                    }
+                    avgFoodSearchTime = Math.round(avgFoodSearchTime / (double)foodSearchTime.size());
+                }
+                long avgCreatureSearchTime = 0;
+                synchronized (creatureSearchTime) {
+                    for (long time : creatureSearchTime) {
+                        avgCreatureSearchTime += time;
+                    }
+                    avgCreatureSearchTime = Math.round(avgCreatureSearchTime / (double)creatureSearchTime.size());
+                }
+                logFoodSearchTime.log(avgFoodSearchTime);
+                logCreatureSearchTime.log(avgCreatureSearchTime);
+                totalAvgFST.add(avgFoodSearchTime);
+                totalAvgCST.add(avgCreatureSearchTime);
+                if (totalAvgFST.size() >= 10) {
+                    totalAvgFST.stream().reduce(Long::sum).ifPresent(value -> {
+                        logFoodSearchTime.log("total avg: " + Math.round(value / (double)totalAvgFST.size()));
+                    });
+                    totalAvgCST.stream().reduce(Long::sum).ifPresent(value -> {
+                        logCreatureSearchTime.log("total avg: " + Math.round(value / (double)totalAvgCST.size()));
+                    });
+                    System.exit(1);
+                    //avg per 6 runs:
+                    //15:49:26.133 --foodSearchTime: --  total avg: 13490833
+                    //15:49:26.134 --creatureSearchTime: --  total avg: 444000
+                }
+            }
+        }, 3000, 3000);
+    }};
+
 
     public void setShape(Shape shape) {
         this.shape = shape;
@@ -94,6 +140,7 @@ public class Creature implements Runnable {
     }
 
     private Optional<Food> findClosestFood() {
+        Instant start = Util.timerInit();
         double min = -1;
         Food minF = null;
         synchronized (simulator.getFoods()) {
@@ -110,6 +157,7 @@ public class Creature implements Runnable {
         if (min > dna.senseRadius) {
             minF = null;
         }
+        foodSearchTime.offer(Util.timerDiffNanos(start));
         return Optional.ofNullable(minF);
 
     }
@@ -123,6 +171,7 @@ public class Creature implements Runnable {
     }
 
     private Optional<Creature> findCreatureToEat() {
+        Instant start = Util.timerInit();
         double min = -1;
         Creature minF = null;
         synchronized (simulator.getCreatures()) {
@@ -137,8 +186,8 @@ public class Creature implements Runnable {
         if (min > dna.senseRadius) {
             minF = null;
         }
+        creatureSearchTime.offer(Util.timerDiffNanos(start));
         return Optional.ofNullable(minF);
-
     }
 
 
