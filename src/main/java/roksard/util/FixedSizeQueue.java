@@ -81,8 +81,12 @@ public class FixedSizeQueue<T> implements Iterable<T>{
         c.forEach(item -> offer((T)item));
     }
 
-    public FixedSizeQueue<T> asSynchronized() {
-        return new FixedSizeQueue.Synchronized<T>(this);
+    public int size() {
+        return currentSize;
+    }
+
+    public static <TT> FixedSizeQueue<TT> synchronizedQueue(FixedSizeQueue<TT> queue) {
+        return new FixedSizeQueue.Synchronized<TT>(queue);
     }
 
     public static void main(String[] args) {
