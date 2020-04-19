@@ -48,7 +48,11 @@ public class Util {
         return Instant.now();
     }
 
-    public static long timerDiff(Instant inst) {
+    public static long timerDiffNanos(Instant inst) {
+        return ChronoUnit.NANOS.between(inst, Instant.now());
+    }
+
+    public static long timerDiffMillis(Instant inst) {
         return ChronoUnit.MILLIS.between(inst, Instant.now());
     }
 
