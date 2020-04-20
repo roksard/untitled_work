@@ -84,7 +84,7 @@ public class EvolutionSimulatorHashed extends EvolutionSimulator{
 
     @Override
     public void addCreature(Creature c) {
-        synchronized (creatures) {
+        synchronized (getCreaturesLock()) {
             creatures.add(c);
         }
         synchronized (this) {
@@ -94,11 +94,47 @@ public class EvolutionSimulatorHashed extends EvolutionSimulator{
         executorService.execute(c);
     }
 
+    public void addCreatures(List<Creature> list) { list.forEach(this::addCreature); }
+
     public void addFood(Food f) {
-        synchronized (foods) {
+        synchronized (getFoodsLock()) {
             foods.add(f);
         }
         getHolderByCoords(f.getLocation()).getFoods().add(f);
+    }
+
+    public void addFoods(List<Food> list) {
+        list.forEach(this::addFood);
+    }
+
+    public void removeFood(Food f) {
+        synchronized (getFoodsLock()) {
+            foods.remove(f);
+        }
+        getHolderByCoords(f.getLocation()).getFoods().remove(f);
+    }
+
+
+    public void clearFoods() {
+        synchronized (getFoodsLock()) {
+            foods.clear();
+            for (int i = 0; i < holdersNumber; i++) {
+                for (int n = 0; n < holdersNumber; n++) {
+                    holders[i][n].getFoods().clear();
+                }
+            }
+        }
+    }
+
+    public void clearCreatures() {
+        synchronized (getCreaturesLock()) {
+            creatures.clear();
+            for (int i = 0; i < holdersNumber; i++) {
+                for (int n = 0; n < holdersNumber; n++) {
+                    holders[i][n].getCreatures().clear();
+                }
+            }
+        }
     }
 
     public void removeFoodHash(Food f) {

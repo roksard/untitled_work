@@ -35,7 +35,7 @@ public class CreatureHashed extends Creature {
         Instant start = Util.timerInit();
         double min = -1;
         Food minF = null;
-        synchronized (simulator.getFoods()) {
+        synchronized (simulator.getFoodsLock()) {
             Set<EvolutionSimulatorHashed.Holder> holders = simulator.getHoldersByRange(location, dna.senseRadius);
             for (EvolutionSimulatorHashed.Holder holder : holders) {
                 for (Food food : holder.getFoods()) {
@@ -61,7 +61,7 @@ public class CreatureHashed extends Creature {
         Instant start = Util.timerInit();
         double min = -1;
         Creature minF = null;
-        synchronized (simulator.getCreatures()) {
+        synchronized (simulator.getCreaturesLock()) {
             for (Creature creature : simulator.getCreatures()) {
                 double dist = creature.getLocation().distance(this.location);
                 if (creature.isAlive() && creature.isSmaller(this) && (min == -1 || dist < min)) {
@@ -116,7 +116,7 @@ public class CreatureHashed extends Creature {
             return;
         }
         boolean keepHunting;
-        synchronized (simulator.getCreatures()) {
+        synchronized (simulator.getCreaturesLock()) {
             keepHunting = creatureToEat.isAlive() && creatureToEat.location.distance(location) <= dna.senseRadius;
         }
         if (!keepHunting) {
@@ -126,7 +126,7 @@ public class CreatureHashed extends Creature {
             if (creatureToEat.location.distance(location) <= this.dna.size / 2 ) {
                 //eat
                 double energyToAdd = 0;
-                synchronized (simulator.getCreatures()) {
+                synchronized (simulator.getCreaturesLock()) {
                     if (creatureToEat.isAlive()) {
                         creatureToEat.setAlive(false);
                         energyToAdd = creatureToEat.dna.size * 20;

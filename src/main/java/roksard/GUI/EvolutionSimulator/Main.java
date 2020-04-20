@@ -58,27 +58,26 @@ public class Main {
         timers.get(++tid).schedule(new TimerTask() {
             @Override
             public void run() {
+                List<Food> newFood;
                 synchronized (simulator.getFoodsLock()) {
-                    List<Food> newFood = simulator.getFoods().stream()
+                    newFood = simulator.getFoods().stream()
                             .filter(food -> food.isExists())
                             .collect(Collectors.toList());
-                    simulator.getFoods().clear();
-                    simulator.getFoods().addAll(newFood);
-
                 }
+                simulator.clearFoods();
+                simulator.addFoods(newFood);
+
                 synchronized (simulator.getCreaturesLock()) {
-                    synchronized (simulator.getDeadCreatures()) {
-                        List<Creature> newCreatures = simulator.getCreatures().stream()
-                                .filter(creature -> creature.isAlive())
-                                .collect(Collectors.toList());
-                        simulator.getCreatures().clear();
-                        if (newCreatures.size() == 0) {
-                            simulator.log.log("stopping simulator");
-                            simulator.shutdownNow();
-                            timers.forEach(Timer::cancel);
-                        }
-                        simulator.getCreatures().addAll(newCreatures);
+                    List<Creature> newCreatures = simulator.getCreatures().stream()
+                            .filter(creature -> creature.isAlive())
+                            .collect(Collectors.toList());
+                    simulator.clearCreatures();
+                    if (newCreatures.size() == 0) {
+                        simulator.log.log("stopping simulator");
+                        simulator.shutdownNow();
+                        timers.forEach(Timer::cancel);
                     }
+                    simulator.addCreatures(newCreatures);
                 }
             }
         }, 10000, 10000);
