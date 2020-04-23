@@ -9,7 +9,7 @@ public class DateFormat1 {
     public static void main(String[] args) {
         Date date = Calendar.getInstance().getTime();
         System.out.println(
-                new SimpleDateFormat("dd.MM.yyyy").format(date)     );
+                new SimpleDateFormat("dd MMMM yyyy").format(date)     );
         System.out.println("test");
         System.out.println(
                 new SimpleDateFormat("dd.MM.yyyy").format(null)     );
