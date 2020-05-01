@@ -11,7 +11,6 @@ public class RandomNumberGeneratorNoRepeat {
         int to = 100;
         int numbersCount = to-from+1;
 
-        Random rand = new Random();
         List<Integer> list = new ArrayList<>(numbersCount);
         for(int i = from; i < numbersCount; i++) {
             list.add(i);
