@@ -16,7 +16,7 @@ public class RandomNumberGeneratorNoRepeat {
             list.add(i);
         }
         Collections.shuffle(list);
-        System.out.println(list);
+        list.forEach(item -> System.out.println(item + "."));
     }
 }
 
