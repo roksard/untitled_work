@@ -10,7 +10,8 @@ public class RandomNumberGenerator {
 
         Random rand = new Random();
         for(int i = 0; i < numbersCount; i++) {
-            System.out.println(rand.nextInt(to - from + 1)+from);
+            int number = rand.nextInt(to - from + 1) + from;
+            System.out.print(number + ", ");
         }
 
     }
