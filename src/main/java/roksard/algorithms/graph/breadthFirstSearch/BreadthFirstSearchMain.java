@@ -19,7 +19,7 @@ public class BreadthFirstSearchMain {
         while ((node = toCheck.pollFirst()) != null) {
             if (!checked.contains(node)) {
                 checked.add(node);
-                System.out.println("checking node: " + node);
+                System.out.println("checking node: " + node.toString() + node.edges());
                 if (node == nodeB) {
                     System.out.println("found!");
                     return Collections.EMPTY_LIST;

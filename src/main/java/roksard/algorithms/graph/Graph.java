@@ -63,7 +63,8 @@ public class Graph {
             nodes
                     .append("\n")
                     .append(tab)
-                    .append(node.toString());
+                    .append(node.toString())
+                    .append(node.edges());
         }
         if (nodeList.size() > 0) {
             nodes.append("\n");

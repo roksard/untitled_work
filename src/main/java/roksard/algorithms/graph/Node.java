@@ -29,6 +29,10 @@ public class Node {
 
     @Override
     public String toString() {
+        return name;
+    }
+
+    public String edges() {
         StringBuilder nodes = new StringBuilder();
         edges.forEach((node, weight) -> {
             if (nodes.length() == 0) {
@@ -36,9 +40,9 @@ public class Node {
             } else {
                 nodes.append(" | ");
             }
-            nodes.append(" -").append(weight).append(">Node.").append(node.name);
+            nodes.append(weight).append("->").append(node.toString());
         });
         nodes.append(")");
-        return "Node." + name + nodes.toString();
+        return nodes.toString();
     }
 }
