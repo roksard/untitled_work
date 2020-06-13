@@ -15,30 +15,26 @@ public class BreadthFirstSearchMain {
         Deque<Node> toCheck = new ArrayDeque<>();
         toCheck.add(nodeA);
         Node node;
+        Set<Node> checked = new HashSet<>();
         while ((node = toCheck.pollFirst()) != null) {
-            System.out.println("checking node: " + node);
-            if (node == nodeB) {
-                System.out.println("found!");
-                System.exit(0);
-                return Collections.EMPTY_LIST;
-            } else {
-                toCheck.addAll(node.getEdges().keySet());
+            if (!checked.contains(node)) {
+                checked.add(node);
+                System.out.println("checking node: " + node);
+                if (node == nodeB) {
+                    System.out.println("found!");
+                    return Collections.EMPTY_LIST;
+                } else {
+                    toCheck.addAll(node.getEdges().keySet());
+                }
             }
         }
         return Collections.EMPTY_LIST;
     }
     public static void main(String[] args) throws InterruptedException {
-        Graph graph = new Graph(20, true, 1, 2);
-        Random rand = new Random();
+        Random rand = new Random(1);
+        Graph graph = new Graph(20, false, 1, 1, rand);
         List<Node> nodeList = graph.getNodeList();
-        new Thread() {
-            @Override
-            public void run() {
-                breadthFirstSearch(nodeList.get(rand.nextInt(nodeList.size())), nodeList.get(rand.nextInt(nodeList.size())));
-            }
-        }.start();
         System.out.println(graph.toString());
-        Thread.sleep(3000);
-        System.exit(1);
+        breadthFirstSearch(nodeList.get(rand.nextInt(nodeList.size())), nodeList.get(rand.nextInt(nodeList.size())));
     }
 }

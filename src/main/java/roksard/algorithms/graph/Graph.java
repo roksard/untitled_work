@@ -14,7 +14,7 @@ public class Graph {
     public Graph() {
     }
 
-    public Graph(int nodesCount, boolean directional, int minEdgesPerNode, int maxEdgesPerNode) {
+    public Graph(int nodesCount, boolean directional, int minEdgesPerNode, int maxEdgesPerNode, Random rand) {
         if (nodesCount < 2) {
             throw new RuntimeException("nodesCount is less than 2");
         }
@@ -25,11 +25,10 @@ public class Graph {
             throw new RuntimeException("maxEdgesPerNode invalid: " + maxEdgesPerNode);
         }
         for (int i = 0; i < nodesCount; i++) {
-            Node node = new Node();
+            Node node = new Node(nodeList.isEmpty());
             nodeList.add(node);
         }
         int edgeWeight = 1;
-        Random rand = new Random();
         for (int i = 0; i < nodeList.size(); i++) {
             Node node = nodeList.get(i);
             Map<Node, Integer> edges = node.getEdges();
