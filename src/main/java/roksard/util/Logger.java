@@ -46,7 +46,7 @@ public class Logger {
         try {
             if (fileName != null) {
                 try {
-                    fs = new FileOutputStream(fileName, false);
+                    fs = new FileOutputStream(fileName, true);
                     ps = new PrintStream(fs);
                     printStream = ps;
                 } catch (Exception e) {
