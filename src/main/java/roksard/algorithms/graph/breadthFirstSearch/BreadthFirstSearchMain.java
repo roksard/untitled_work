@@ -32,7 +32,7 @@ public class BreadthFirstSearchMain {
     }
     public static void main(String[] args) throws InterruptedException {
         Random rand = new Random(1);
-        Graph graph = new Graph(20, false, 1, 1, rand);
+        Graph graph = new Graph(20, false, 1, 1, 1, 1, rand);
         List<Node> nodeList = graph.getNodeList();
         System.out.println(graph.toString());
         breadthFirstSearch(nodeList.get(rand.nextInt(nodeList.size())), nodeList.get(rand.nextInt(nodeList.size())));
