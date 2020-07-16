@@ -14,7 +14,7 @@ public class Graph {
     public Graph() {
     }
 
-    public Graph(int nodesCount, boolean directional, int minEdgesPerNode, int maxEdgesPerNode, Random rand) {
+    public Graph(int nodesCount, boolean directional, int edgeWeightFrom, int edgeWeightTo, int minEdgesPerNode, int maxEdgesPerNode, Random rand) {
         if (nodesCount < 2) {
             throw new RuntimeException("nodesCount is less than 2");
         }
@@ -28,7 +28,9 @@ public class Graph {
             Node node = new Node(nodeList.isEmpty());
             nodeList.add(node);
         }
-        int edgeWeight = 1;
+        int edgeWeight = (edgeWeightTo-edgeWeightFrom) > 0
+                ? rand.nextInt(edgeWeightTo-edgeWeightFrom) + edgeWeightFrom
+                : edgeWeightFrom;
         for (int i = 0; i < nodeList.size(); i++) {
             Node node = nodeList.get(i);
             Map<Node, Integer> edges = node.getEdges();
