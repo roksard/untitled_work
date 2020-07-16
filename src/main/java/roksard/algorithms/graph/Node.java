@@ -42,7 +42,9 @@ public class Node {
             }
             nodes.append(weight).append("->").append(node.toString());
         });
-        nodes.append(")");
+        if (!edges.isEmpty()) {
+            nodes.append(")");
+        }
         return nodes.toString();
     }
 }
