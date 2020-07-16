@@ -28,10 +28,10 @@ public class Graph {
             Node node = new Node(nodeList.isEmpty());
             nodeList.add(node);
         }
-        int edgeWeight = (edgeWeightTo-edgeWeightFrom) > 0
-                ? rand.nextInt(edgeWeightTo-edgeWeightFrom) + edgeWeightFrom
-                : edgeWeightFrom;
         for (int i = 0; i < nodeList.size(); i++) {
+            int edgeWeight = (edgeWeightTo-edgeWeightFrom+1) > 0
+                    ? rand.nextInt(edgeWeightTo-edgeWeightFrom+1) + edgeWeightFrom
+                    : edgeWeightFrom;
             Node node = nodeList.get(i);
             Map<Node, Integer> edges = node.getEdges();
             int edgesToAdd = minEdgesPerNode + rand.nextInt(maxEdgesPerNode - minEdgesPerNode + 1);
