@@ -35,22 +35,23 @@ public class Dijkstra {
         nodesToProcess.forEach(entry -> processNode(entry.getKey(), entry.getValue() + currentCost, searchNode, costs, parents));
     }
 
-    static List<Node> dijkstra(Node a, Node b) {
-        logger.info("start dijkstra start {} end {}", a, b);
+    static int dijkstra(Node start, Node finish, List<Node> writableResultPath) {
+        logger.info("start dijkstra start {} end {}", start, finish);
         Map<Node,Integer> costs = new HashMap<>();
         Map<Node,Node> parents = new HashMap<>();
-        processNode(a, 0, b, costs, parents);
+        processNode(start, 0, finish, costs, parents);
         logger.info("finished dijkstra");
         logger.info("costs {}", costs);
         logger.info("parents {}", parents);
-        List<Node> resultPath = new ArrayList<>();
-        Node currentNode = b;
+
+        writableResultPath.clear();
+        Node currentNode = finish;
         while (currentNode != null) {
-            resultPath.add(currentNode);
+            writableResultPath.add(currentNode);
             currentNode = parents.get(currentNode);
         }
-        Collections.reverse(resultPath);
-        return resultPath;
+        Collections.reverse(writableResultPath);
+        return costs.get(finish);
     }
 
     public static void main(String[] args) {
@@ -59,7 +60,8 @@ public class Dijkstra {
         Graph graph = GeneratedGraph.directedWeightedNegativeNoCycle_B(searchNodes);
         List<Node> nodeList = graph.getNodeList();
         logger.info("graph \n{}", graph.toString());
-        List<Node> path = dijkstra(searchNodes.get(0), searchNodes.get(1));
-        logger.info("path {}", path);
+        List<Node> path = new ArrayList<>();
+        int cost = dijkstra(searchNodes.get(0), searchNodes.get(1), path);
+        logger.info("cost [{}] path {}", cost, path);
     }
 }
