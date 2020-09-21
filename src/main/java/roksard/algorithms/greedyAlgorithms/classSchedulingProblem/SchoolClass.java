@@ -2,16 +2,21 @@ package roksard.algorithms.greedyAlgorithms.classSchedulingProblem;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import sun.plugin.dom.exception.InvalidStateException;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.Random;
 
 @Getter
 @Setter
 public class SchoolClass {
+    static Random rand = new Random();
     Instant starts;
     Instant ends;
+    static Logger logger = LoggerFactory.getLogger(SchoolClass.class);
 
 
     public long getDurationMinutes() {
@@ -44,5 +49,24 @@ public class SchoolClass {
             return this;
         }
 
+    }
+
+    @Override
+    public String toString() {
+        return "SchoolClass{" +
+                "starts=" + starts +
+                ", ends=" + ends +
+                '}';
+    }
+
+    static void getInstanceRandom() {
+        Instant start = Instant.now().plus(rand.nextInt(10), ChronoUnit.MINUTES);
+        SchoolClass aClass = new SchoolClass.Builder()
+                .starts(start)
+                .ends(start.plus(rand.nextInt(40)+5, ChronoUnit.MINUTES))
+                .build();
+
+        logger.debug(aClass.toString());
+        logger.debug("duration: " + aClass.getDurationMinutes());
     }
 }
