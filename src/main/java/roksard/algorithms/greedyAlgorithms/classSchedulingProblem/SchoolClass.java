@@ -59,14 +59,15 @@ public class SchoolClass {
                 '}';
     }
 
-    static void getInstanceRandom() {
-        Instant start = Instant.now().plus(rand.nextInt(10), ChronoUnit.MINUTES);
+    static SchoolClass getInstanceRandom() {
+        Instant start = Instant.now().plus(rand.nextInt(100), ChronoUnit.MINUTES);
         SchoolClass aClass = new SchoolClass.Builder()
                 .starts(start)
-                .ends(start.plus(rand.nextInt(40)+5, ChronoUnit.MINUTES))
+                .ends(start.plus(rand.nextInt(10)+5, ChronoUnit.MINUTES))
                 .build();
 
         logger.debug(aClass.toString());
         logger.debug("duration: " + aClass.getDurationMinutes());
+        return aClass;
     }
 }
