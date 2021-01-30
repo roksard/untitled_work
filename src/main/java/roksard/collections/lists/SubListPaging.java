@@ -7,9 +7,9 @@ import java.util.Random;
 public class SubListPaging {
     public static void main(String[] args) {
         List<Integer> list = new ArrayList<>();
-        for (int i = 0; i < new Random().nextInt(100)+5; i++) {
-            list.add(i);
-        }
+//        for (int i = 0; i < new Random().nextInt(100)+5; i++) {
+//            list.add(i);
+//        }
 
         iterate(list);
     }
