@@ -16,8 +16,10 @@ public class Main {
         frame.repaint();
 
 
-        Data data = new Data(350);
+        Data data = new Data(100);
         System.out.println(Arrays.toString(data.getArray()));
-        System.out.println(Arrays.toString(new InsertionSort(data, sortPanel, 30).sort()));
+//        new InsertionSort(data, sortPanel, 1).sort();
+        data.refillArray();
+        new BubbleSort(data, sortPanel, 1).sort();
     }
 }
