@@ -20,6 +20,7 @@ public class Main {
         System.out.println(Arrays.toString(data.getArray()));
 //        new InsertionSort(data, sortPanel, 1).sort();
         data.refillArray();
-        new BubbleSort(data, sortPanel, 1).sort();
+//        new BubbleSort(data, sortPanel, 1).sort();
+        new SelectionSort(data, sortPanel, 1).sort();
     }
 }
