@@ -1,5 +1,10 @@
 package roksard.algorithms.sort;
 
+/**
+ * Insertion sort: a version where first we find (using binary search on a already sorted part)
+ *  position where to insert the desired element. Then moving all elements after that position
+ *  into +1 position. Then inserting desired element.
+ */
 public class InsertionSort {
     private Data data;
     private SortPanel sortPanel;

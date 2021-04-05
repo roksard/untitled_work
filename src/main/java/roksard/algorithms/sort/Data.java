@@ -7,8 +7,8 @@ public class Data {
     private int[] array;
     private int maxValue;
     private int minValue;
-    private int cursor;
-    private int seekCursor;
+    private int cursor = -1;
+    private int seekCursor = -1;
     private Random random = new Random();
 
     public int getCursor() {
@@ -29,6 +29,8 @@ public class Data {
     }
 
     public void refillArray() {
+        cursor = -1;
+        seekCursor = -1;
         for (int i = 0; i < array.length; i++) {
             array[i] = random.nextInt(maxValue-minValue+1) + minValue;
             if (array[i] == 9) {
