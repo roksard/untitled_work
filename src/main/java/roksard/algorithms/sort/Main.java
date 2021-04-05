@@ -1,5 +1,8 @@
 package roksard.algorithms.sort;
 
+import roksard.algorithms.sort.sorters.InsertionSort;
+import roksard.algorithms.sort.sorters.InsertionSortSimple;
+
 import javax.swing.*;
 import java.util.Arrays;
 

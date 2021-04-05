@@ -1,4 +1,7 @@
-package roksard.algorithms.sort;
+package roksard.algorithms.sort.sorters;
+
+import roksard.algorithms.sort.Data;
+import roksard.algorithms.sort.SortPanel;
 
 /**
  * Insertion sort: a version where first we find (using binary search on a already sorted part)
