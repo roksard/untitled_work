@@ -1,7 +1,9 @@
 package roksard.algorithms.sort;
 
+import roksard.algorithms.sort.sorters.BubbleSort;
 import roksard.algorithms.sort.sorters.InsertionSort;
 import roksard.algorithms.sort.sorters.InsertionSortSimple;
+import roksard.algorithms.sort.sorters.SelectionSort;
 
 import javax.swing.*;
 import java.util.Arrays;
@@ -24,7 +26,9 @@ public class Main {
         new InsertionSort(data, sortPanel, 1).sort();
         data.refillArray();
         new InsertionSortSimple(data, sortPanel, 1).sort();
-//        new BubbleSort(data, sortPanel, 1).sort();
-//        new SelectionSort(data, sortPanel, 1).sort();
+        data.refillArray();
+        new BubbleSort(data, sortPanel, 1).sort();
+        data.refillArray();
+        new SelectionSort(data, sortPanel, 1).sort();
     }
 }
