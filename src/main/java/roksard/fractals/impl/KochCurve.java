@@ -2,13 +2,11 @@ package roksard.fractals.impl;
 
 import roksard.fractals.RxJPanel;
 
-import javax.swing.*;
 import java.awt.*;
-import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 
 public class KochCurve extends RxJPanel {
-    private Point2D p0, p1;
+    private Point2D p0, p1, p2;
     private double mult;
 
     public KochCurve(double mult) {
@@ -53,18 +51,23 @@ public class KochCurve extends RxJPanel {
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        if (p0 == null || p1 == null) {
-            double width = g.getClip().getBounds().getWidth();
-            double halfY = g.getClip().getBounds().getHeight() / 2;
-            p0 = new Point2D.Double(10, halfY);
-            p1 = new Point2D.Double(width - 10, halfY);
-        } else {
+        if (Double.compare(mult, 1) != 0) {
+            p0.setLocation(p0.getX() * mult, p0.getY() * mult);
             p1.setLocation(p1.getX() * mult, p1.getY() * mult);
+            p2.setLocation(p2.getX() * mult, p2.getY() * mult);
+        } else {
+            double width = g.getClip().getBounds().getWidth();
+            double height = g.getClip().getBounds().getHeight();
+            double border = 50;
+            p0 = new Point2D.Double(width / 2, border);
+            p1 = new Point2D.Double(width - border, height - border*2);
+            p2 = new Point2D.Double(border, height - border*2);
         }
-        koch(g,
-                p0,
-                p1,
-                10
-        );
+//        drawLine(g, p0, p1);
+//        drawLine(g, p1, p2);
+//        drawLine(g, p2, p0);
+        koch(g, p0,  p1, 5);
+        koch(g, p1,  p2, 5);
+        koch(g, p2,  p0, 5);
     }
 }
