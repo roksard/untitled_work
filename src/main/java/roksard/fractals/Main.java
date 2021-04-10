@@ -1,5 +1,6 @@
 package roksard.fractals;
 
+import roksard.fractals.impl.KochCurve;
 import roksard.fractals.impl.Sierpinski;
 
 import javax.swing.*;
@@ -7,7 +8,7 @@ import javax.swing.*;
 public class Main {
     public static void main(String[] args) {
         JFrame frame = new JFrame();
-        frame.add(new Sierpinski());
+        frame.add(new KochCurve());
 
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.pack();

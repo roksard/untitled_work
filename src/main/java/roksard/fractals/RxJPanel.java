@@ -21,4 +21,11 @@ public abstract class RxJPanel extends JPanel {
         g2d.draw(line3);
     }
 
+    public void drawLine(Graphics g, Point2D p0, Point2D p1) {
+        Graphics2D g2d = (Graphics2D)g;
+        Line2D.Double line1 = new Line2D.Double(p0, p1);
+        g2d.setColor(Color.GREEN);
+        g2d.draw(line1);
+    }
+
 }
