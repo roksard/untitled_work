@@ -1,5 +1,7 @@
 package roksard.fractals;
 
+import roksard.fractals.impl.Sierpinski;
+
 import javax.swing.*;
 
 public class Main {
