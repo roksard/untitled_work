@@ -51,10 +51,10 @@ public class KochCurve extends RxJPanel {
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        if (Double.compare(mult, 1) != 0) {
+        if (Double.compare(mult, 1) != 0 && p0 != null) {
             p0.setLocation(p0.getX() * mult, p0.getY() * mult);
             p1.setLocation(p1.getX() * mult, p1.getY() * mult);
-            p2.setLocation(p2.getX() * mult, p2.getY() * mult);
+//            p2.setLocation(p2.getX() * mult, p2.getY() * mult);
         } else {
             double width = g.getClip().getBounds().getWidth();
             double height = g.getClip().getBounds().getHeight();

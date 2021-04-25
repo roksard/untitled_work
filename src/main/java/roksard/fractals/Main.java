@@ -11,7 +11,7 @@ import java.awt.event.MouseListener;
 public class Main {
     public static void main(String[] args) {
         JFrame frame = new JFrame();
-        frame.add(new KochCurve(1));
+        frame.add(new KochCurve(1.01));
 
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.pack();
