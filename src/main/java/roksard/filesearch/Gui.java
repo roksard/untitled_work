@@ -69,11 +69,15 @@ public class Gui {
             @Override
             public void actionPerformed(ActionEvent e) {
                 Result result = new Result();
-                fileSearch.searchBySubstring(jtDir.getText(), true, jtSubString.getText(), result);
-                jtResult.setText(result.getResult().toString());
+                String subString = jtSubString.getText();
+                try {
+                    fileSearch.searchBySubstring(jtDir.getText(), true, subString, result);
+                } catch (Throwable err) {
+                    JOptionPane.showMessageDialog(jpanel, "Error: " + err.toString() + ": " + err.getMessage());
+                }
+                jtResult.setText(subString + ":\n" + result.getResult().toString());
                 config.setDirectory(jtDir.getText());
                 config.setSubString(jtSubString.getText());
-
             }
         });
 

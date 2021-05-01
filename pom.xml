@@ -150,6 +150,22 @@
             <properties>
                 <spring.boot.mainclass>roksard.filesearch.Gui</spring.boot.mainclass>
             </properties>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-compiler-plugin</artifactId>
+                        <version>3.8.1</version>
+                        <configuration>
+<!--                            <excludes>-->
+<!--                                <exclude>roksard/**</exclude>-->
+<!--                            </excludes>-->
+                            <includes>
+                                <include>roksard/filesearch/**</include>
+                            </includes>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
         </profile>
     </profiles>
 
