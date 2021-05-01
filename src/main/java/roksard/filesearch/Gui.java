@@ -4,11 +4,15 @@ import roksard.json_serializer.JsonSerializer;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.awt.geom.Ellipse2D;
+import java.io.IOException;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.Future;
@@ -18,12 +22,13 @@ public class Gui {
     final static JsonSerializer<Config> serializer = new JsonSerializer<>(Config.class);
     final static Config config = serializer.load(CONFIG_FILE, Config.DEFAULT);
     static JFrame frame;
+    final static String TITLE = "fileSearch by content";
 
     public static void main(String[] args) {
-
         FileSearch fileSearch = new FileSearch();
 
         frame = new JFrame();
+        frame.setTitle(TITLE);
         Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
             @Override
             public void uncaughtException(Thread t, Throwable e) {
@@ -79,35 +84,12 @@ public class Gui {
             @Override
             public void actionPerformed(ActionEvent e) {
                 jtResult.setText("...");
+                frame.setTitle("..." + " - " + TITLE);
                 jpanel.repaint();
                 Result result = new Result();
                 String subString = jtSubString.getText();
                 Future<Result> future = fileSearch.searchBySubstringAsync(jtDir.getText(), true, subString, result);
-                Timer timer = new Timer();
-                timer.schedule(new TimerTask() {
-                    @Override
-                    public void run() {
-                        if (future.isDone()) {
-                            try {
-                                timer.cancel();
-                                jtResult.setText(subString + ":\n" + future.get().getResult().toString());
-                            } catch (Exception ex) {
-                                throw new RuntimeException(ex);
-                            }
-                        } else {
-                            if (jtResult.getText().equals(":..")) {
-                                jtResult.setText(".:.");
-                            } else {
-                                if (jtResult.getText().equals(".:.")) {
-                                    jtResult.setText("..:");
-                                } else {
-                                    jtResult.setText(":..");
-                                }
-                            }
-                        }
-                    }
-                }, 100, 500);
-//                jtResult.setText(subString + ":\n" + result.getResult().toString());
+                runSearchingTimer(frame, future, jtResult, subString);
                 config.setDirectory(jtDir.getText());
                 config.setSubString(jtSubString.getText());
             }
@@ -124,6 +106,27 @@ public class Gui {
         button.addActionListener(searchActionListener);
         jpanel.add(button);
 
+        JCheckBox jchSearchFromClip = new JCheckBox("scan clip");
+        jchSearchFromClip.setToolTipText("automatically search text from clipboard");
+        jchSearchFromClip.setBounds(215, y+hy*1, 100, 20);
+        jpanel.add(jchSearchFromClip);
+
+        jchSearchFromClip.addActionListener(new ActionListener() {
+            Timer clipboardTimer;
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (jchSearchFromClip.isSelected()) {
+                    if (clipboardTimer == null) {
+                        clipboardTimer = clipboardTimer(searchActionListener, jtSubString);
+                    }
+                } else {
+                    clipboardTimer.cancel();
+                    clipboardTimer = null;
+                }
+            }
+        });
+
         jpanel.setLayout(null);
         frame.add(jpanel);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -131,6 +134,59 @@ public class Gui {
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
         frame.repaint();
+    }
+
+    static Timer clipboardTimer(ActionListener searchAction, JTextField jtSubString) {
+        Timer timer = new Timer();
+        timer.schedule(new TimerTask() {
+            String last = "";
+
+            @Override
+            public void run() {
+                Clipboard c=Toolkit.getDefaultToolkit().getSystemClipboard();
+
+                // Get data stored in the clipboard that is in the form of a string (text)
+                try {
+                    String clip = c.getData(DataFlavor.stringFlavor).toString();
+                    if (!clip.equals(last)) {
+                        last = clip;
+                        jtSubString.setText(clip);
+                        searchAction.actionPerformed(null);
+                    }
+                } catch (UnsupportedFlavorException e) {
+                } catch (IOException e) {
+                }
+            }
+        }, 1000, 1000);
+        return timer;
+    }
+
+    static void runSearchingTimer(JFrame frame, Future<Result> future, JTextArea jtResult, String subString) {
+        Timer timer = new Timer();
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                if (future.isDone()) {
+                    try {
+                        timer.cancel();
+                        jtResult.setText(subString + ":\n" + future.get().getResult().toString());
+                        frame.setTitle(future.get().getResult().size() + ": " + subString + " - " + TITLE);
+                    } catch (Exception ex) {
+                        throw new RuntimeException(ex);
+                    }
+                } else {
+                    if (jtResult.getText().equals(":..")) {
+                        jtResult.setText(".:.");
+                    } else {
+                        if (jtResult.getText().equals(".:.")) {
+                            jtResult.setText("..:");
+                        } else {
+                            jtResult.setText(":..");
+                        }
+                    }
+                }
+            }
+        }, 100, 500);
     }
 
     static WindowListener getMainWindowListener() {
