@@ -3,20 +3,39 @@ package roksard.filesearch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 public class FileSearch {
     Logger logger = LoggerFactory.getLogger(FileSearch.class);
+    ExecutorService executor;
 
     public static void main(String[] args) {
         Result result = new Result();
         new FileSearch().searchBySubstring("F:\\xfiles\\games doc\\", true, "tank", result);
         System.out.println(result);
 
+    }
+
+    public Future<Result> searchBySubstringAsync(String directory, boolean searchSubDirs, String subString, Result result) {
+        if (executor == null) {
+            executor = Executors.newSingleThreadExecutor();
+        }
+        return executor.submit(new Callable<Result>() {
+            @Override
+            public Result call() throws Exception {
+                searchBySubstring(directory, searchSubDirs, subString, result);
+                return result;
+            }
+        });
     }
 
     public void searchBySubstring(String directory, boolean searchSubDirs, String subString, Result result) {

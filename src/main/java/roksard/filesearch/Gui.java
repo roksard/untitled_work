@@ -9,6 +9,9 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.awt.geom.Ellipse2D;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.concurrent.Future;
 
 public class Gui {
     final static String CONFIG_FILE = "settings.p";
@@ -17,9 +20,16 @@ public class Gui {
     static JFrame frame;
 
     public static void main(String[] args) {
+
         FileSearch fileSearch = new FileSearch();
 
         frame = new JFrame();
+        Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
+            @Override
+            public void uncaughtException(Thread t, Throwable e) {
+                JOptionPane.showMessageDialog(frame, "Error: " + e.toString() + ": " + e.getMessage());
+            }
+        });
         frame.setLocation(config.getX(), config.getY());
         frame.addWindowListener(getMainWindowListener());
                 JPanel jpanel = new JPanel() {
@@ -68,14 +78,36 @@ public class Gui {
         jtSubString.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                jtResult.setText("...");
+                jpanel.repaint();
                 Result result = new Result();
                 String subString = jtSubString.getText();
-                try {
-                    fileSearch.searchBySubstring(jtDir.getText(), true, subString, result);
-                } catch (Throwable err) {
-                    JOptionPane.showMessageDialog(jpanel, "Error: " + err.toString() + ": " + err.getMessage());
-                }
-                jtResult.setText(subString + ":\n" + result.getResult().toString());
+                Future<Result> future = fileSearch.searchBySubstringAsync(jtDir.getText(), true, subString, result);
+                Timer timer = new Timer();
+                timer.schedule(new TimerTask() {
+                    @Override
+                    public void run() {
+                        if (future.isDone()) {
+                            try {
+                                timer.cancel();
+                                jtResult.setText(subString + ":\n" + future.get().getResult().toString());
+                            } catch (Exception ex) {
+                                throw new RuntimeException(ex);
+                            }
+                        } else {
+                            if (jtResult.getText().equals(":..")) {
+                                jtResult.setText(".:.");
+                            } else {
+                                if (jtResult.getText().equals(".:.")) {
+                                    jtResult.setText("..:");
+                                } else {
+                                    jtResult.setText(":..");
+                                }
+                            }
+                        }
+                    }
+                }, 500, 500);
+//                jtResult.setText(subString + ":\n" + result.getResult().toString());
                 config.setDirectory(jtDir.getText());
                 config.setSubString(jtSubString.getText());
             }
