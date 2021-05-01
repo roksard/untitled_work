@@ -106,7 +106,7 @@ public class Gui {
                             }
                         }
                     }
-                }, 500, 500);
+                }, 100, 500);
 //                jtResult.setText(subString + ":\n" + result.getResult().toString());
                 config.setDirectory(jtDir.getText());
                 config.setSubString(jtSubString.getText());
