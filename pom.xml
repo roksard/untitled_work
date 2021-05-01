@@ -145,6 +145,12 @@
                 <spring.boot.mainclass>roksard.Random.byRange.RandomNumberGeneratorByRange</spring.boot.mainclass>
             </properties>
         </profile>
+        <profile>
+            <id>filesearch</id>
+            <properties>
+                <spring.boot.mainclass>roksard.filesearch.Gui</spring.boot.mainclass>
+            </properties>
+        </profile>
     </profiles>
 
 
