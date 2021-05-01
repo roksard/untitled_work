@@ -75,7 +75,7 @@ public class Gui {
         jtResult.setBounds(5, y+hy*2, 390, 50);
         jtResult.setBorder(BorderFactory.createEtchedBorder());
 
-        jtSubString.addActionListener(new ActionListener() {
+        ActionListener searchActionListener = new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 jtResult.setText("...");
@@ -111,10 +111,18 @@ public class Gui {
                 config.setDirectory(jtDir.getText());
                 config.setSubString(jtSubString.getText());
             }
-        });
+        };
+
+        jtSubString.addActionListener(searchActionListener);
 
         jpanel.add(jtResult);
         jpanel.add(jtSubString);
+
+        Button button = new Button();
+        button.setBounds(160, y+hy*1, 50, 20);
+        button.setLabel("Search");
+        button.addActionListener(searchActionListener);
+        jpanel.add(button);
 
         jpanel.setLayout(null);
         frame.add(jpanel);
