@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 
 public class JsonSerializer<T> {
     Class<T> type;
@@ -14,7 +15,10 @@ public class JsonSerializer<T> {
 
     public T load(String fileName, T defaultValue) {
         ObjectMapper objectMapper = new ObjectMapper(new JsonFactory());
-        try (Reader reader = new FileReader(fileName)) {
+        try (
+                FileInputStream fin = new FileInputStream(fileName);
+                Reader reader = new InputStreamReader(fin, StandardCharsets.UTF_8)
+        ) {
             return objectMapper.readValue(reader, type);
         } catch (FileNotFoundException e) {
             return defaultValue;
@@ -25,7 +29,10 @@ public class JsonSerializer<T> {
 
     public void save(String fileName, T object) {
         ObjectMapper objectMapper = new ObjectMapper(new JsonFactory());
-        try (Writer writer = new FileWriter(fileName)) {
+        try (
+                FileOutputStream fos =  new FileOutputStream(fileName);
+                Writer writer = new OutputStreamWriter(fos, StandardCharsets.UTF_8)
+        ) {
             objectMapper.writeValue(writer, object);
         } catch (Exception e) {
             throw new RuntimeException(e);
