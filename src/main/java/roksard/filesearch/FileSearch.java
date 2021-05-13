@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -67,7 +68,7 @@ public class FileSearch {
         String subStringLow = subString.toLowerCase();
         logger.debug("file={}", file.getAbsolutePath());
         final int lineLimit = 1_000_000;
-        try (Scanner scanner = new Scanner(file)) {
+        try (Scanner scanner = new Scanner(file, StandardCharsets.UTF_8.name())) {
             for (int i = 0; i < lineLimit; i++) {
                 String line = scanner.nextLine();
                 if (line.toLowerCase().contains(subStringLow)) {
