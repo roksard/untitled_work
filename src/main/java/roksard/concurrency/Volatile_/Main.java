@@ -1,4 +1,4 @@
-package roksard.concurrency.volatile_;
+package roksard.concurrency.Volatile_;
 
 import roksard.util.Logger;
 

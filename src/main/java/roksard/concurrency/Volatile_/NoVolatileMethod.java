@@ -1,10 +1,10 @@
-package roksard.concurrency.volatile_;
+package roksard.concurrency.Volatile_;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-import static roksard.concurrency.volatile_.Main.log;
+import static roksard.concurrency.Volatile_.Main.log;
 
 public class NoVolatileMethod {
 

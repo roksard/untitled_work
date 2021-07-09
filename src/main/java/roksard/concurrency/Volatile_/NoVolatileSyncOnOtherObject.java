@@ -1,14 +1,12 @@
-package roksard.concurrency.volatile_;
+package roksard.concurrency.Volatile_;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 
-import static roksard.concurrency.volatile_.Main.log;
+import static roksard.concurrency.Volatile_.Main.log;
 
-public class NoVolatileUsingLockPerTask {
+public class NoVolatileSyncOnOtherObject {
 
     public void test(int taskCount) throws InterruptedException {
         System.out.println("\n" + getClass().getSimpleName());
@@ -16,13 +14,13 @@ public class NoVolatileUsingLockPerTask {
         ExecutorService exec = Executors.newCachedThreadPool();
         for (int i = 0; i < taskCount; i++) {
             exec.execute(new Runnable() {
-                Lock lock = new ReentrantLock();
+                Integer objectForThisTask = new Integer(1);
                 @Override
                 public void run() {
                     log("is started.");
                     while (!pojo.stop) {
-                        lock.lock();
-                        lock.unlock();
+                        synchronized (objectForThisTask) {
+                        }
                     }
                     log("is stopped.");
                 }

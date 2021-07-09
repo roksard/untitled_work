@@ -1,4 +1,4 @@
-package roksard.concurrency.volatile_;
+package roksard.concurrency.Volatile_;
 
 public class Pojo {
     boolean stop = false;
