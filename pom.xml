@@ -159,9 +159,9 @@
 <!--                            <excludes>-->
 <!--                                <exclude>roksard/**</exclude>-->
 <!--                            </excludes>-->
-                            <includes>
-                                <include>roksard/filesearch/**</include>
-                            </includes>
+<!--                            <includes>-->
+<!--                                <include>roksard/filesearch/**</include>-->
+<!--                            </includes>-->
                         </configuration>
                     </plugin>
                 </plugins>
