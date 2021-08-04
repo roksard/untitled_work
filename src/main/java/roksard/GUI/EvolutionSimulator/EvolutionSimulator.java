@@ -4,6 +4,8 @@ import roksard.util.FixedSizeQueue;
 import roksard.util.Logger;
 
 import java.awt.*;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -61,9 +63,38 @@ public class EvolutionSimulator {
             foods.add(randomFood());
         }
         for(int i = 0; i < creaturesNumber; i++) {
-            addCreature(new Creature(this, randomPoint(400, 400), new Dna(5, 10, 20, false)));
+            addCreature(new Creature(this, randomPoint(400, 400), new Dna(5, 5, 30, false)));
         }
         creatures.forEach(executorService::execute);
+    }
+
+    public MouseListener getMouseListener() {
+        return new MouseListener() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+                foods.add(new Food(new Point(e.getX()-5, e.getY()-32), Food.ENERGY));
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+
+            }
+        };
     }
 
     public Point getFieldSize() {

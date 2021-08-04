@@ -2,13 +2,16 @@ package roksard.GUI.EvolutionSimulator.gui;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 
 public class MainWindow {
     EntityMaler entityMaler;
     JFrame frame;
-    public MainWindow(EntityMaler entityMaler) {
+    public MainWindow(EntityMaler entityMaler, MouseListener mouseListener) {
         this.entityMaler = entityMaler;
         frame = new JFrame();
+        frame.addMouseListener(mouseListener);
         frame.add(new JPanel() {
             {
                 setBackground(Color.BLACK);

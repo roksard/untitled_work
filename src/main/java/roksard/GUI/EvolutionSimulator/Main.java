@@ -15,9 +15,9 @@ import java.util.stream.Collectors;
 
 public class Main {
     public static void main(String[] args) {
-        EvolutionSimulator simulator = new EvolutionSimulator(5, 500, 1, 300);
+        EvolutionSimulator simulator = new EvolutionSimulator(1, 50, 1, 300);
         EntityMaler maler = new EntityMalerNoSort(simulator);
-        MainWindow mainWindow = new MainWindow(maler);
+        MainWindow mainWindow = new MainWindow(maler, simulator.getMouseListener());
 
         List<Timer> timers = new ArrayList<>();
         for (int i = 0; i < 10; i++) {
