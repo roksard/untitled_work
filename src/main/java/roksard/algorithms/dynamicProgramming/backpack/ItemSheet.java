@@ -1,6 +1,5 @@
-package roksard.algorithms.dynamicProgramming;
+package roksard.algorithms.dynamicProgramming.backpack;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 

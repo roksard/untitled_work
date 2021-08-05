@@ -1,4 +1,4 @@
-package roksard.algorithms.dynamicProgramming;
+package roksard.algorithms.dynamicProgramming.backpack;
 
 // Racoon tries to steal the best priced items in summary,
 // but he has a limited backpack of 4 slots

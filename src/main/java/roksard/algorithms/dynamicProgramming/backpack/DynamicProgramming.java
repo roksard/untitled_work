@@ -1,6 +1,5 @@
-package roksard.algorithms.dynamicProgramming;
+package roksard.algorithms.dynamicProgramming.backpack;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
