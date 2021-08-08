@@ -1,4 +1,4 @@
-package roksard.algorithms.dynamicProgramming.wordsearch;
+package roksard.algorithms.dynamicProgramming.wordsearch.rxImpl;
 
 import java.nio.charset.StandardCharsets;
 import java.util.*;
