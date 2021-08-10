@@ -1,10 +1,29 @@
 package roksard.algorithms.cosineSimilarity;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 public class CosineSimilarity {
     public static void main(String[] args) {
-        int[] objectA = new int[] {3,2,0,5,0,0,2,0,0};
-        int[] objectB = new int[] {1,0,0,0,0,0,1,0,2};
-        System.out.println("cosine similarity: " + new CosineSimilarity().calc(objectA, objectB));
+        int[] objectA;
+        int[] objectB;
+        List<ObjectDuplex> examples = new ArrayList<>();
+        examples.add(new ObjectDuplex(new int[]{3, 2, 0, 5, 0, 0, 2, 0, 0}, new int[]{1, 0, 0, 0, 0, 0, 1, 0, 2}));
+        examples.add(new ObjectDuplex(new int[]{5, 5}, new int[]{5, 5}));
+        examples.add(new ObjectDuplex(new int[]{99, 99}, new int[]{1, 1}));
+        examples.add(new ObjectDuplex(new int[]{9, 9}, new int[]{1, 1}));
+        examples.add(new ObjectDuplex(new int[]{1, 1}, new int[]{9, 9}));
+        examples.add(new ObjectDuplex(new int[]{-9, -9}, new int[]{9, 9}));
+        examples.add(new ObjectDuplex(new int[]{1, 8}, new int[]{1, 0}));
+        examples.add(new ObjectDuplex(new int[]{1, 8}, new int[]{0, 8}));
+        for (ObjectDuplex example : examples) {
+            System.out.format("cos-sim: %s | objectA: %s | objectB: %s\n",
+                    new CosineSimilarity().calc(example.getObjectA(), example.getObjectB()),
+                    Arrays.toString(example.getObjectA()),
+                    Arrays.toString(example.getObjectB())
+            );
+        }
     }
 
     public double calc(int[] a, int[] b) {
@@ -18,9 +37,9 @@ public class CosineSimilarity {
         }
         magnitudeA = Math.sqrt(magnitudeA);
         magnitudeB = Math.sqrt(magnitudeB);
-        System.out.println("mult = " + mult);
-        System.out.println("magnitudeA = " + magnitudeA);
-        System.out.println("magnitudeB = " + magnitudeB);
+//        System.out.println("mult = " + mult);
+//        System.out.println("magnitudeA = " + magnitudeA);
+//        System.out.println("magnitudeB = " + magnitudeB);
         return mult / (magnitudeA * magnitudeB);
     }
 }
