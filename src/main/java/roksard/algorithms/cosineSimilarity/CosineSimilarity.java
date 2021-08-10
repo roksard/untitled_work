@@ -4,6 +4,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * Ignore length/size of a vector, takes into account only direction of 2 vectors
+ * resulting a value between 0 and 1. where 1 is 100% equal direction und vice versa
+ */
 public class CosineSimilarity {
     public static void main(String[] args) {
         int[] objectA;
