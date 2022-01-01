@@ -17,6 +17,7 @@ public class GregoryLeibnizPi implements Runnable {
     public void run() {
         BigDecimal four = BigDecimal.valueOf(4);
         pi = four;
+        pi.setScale(divisionRounding);
         for (iteration = 3; iteration < iterations; iteration+= 4) {
             pi = pi.subtract(four.divide(BigDecimal.valueOf(iteration), divisionRounding, RoundingMode.HALF_UP))
                     .add(four.divide(BigDecimal.valueOf(iteration+2), divisionRounding, RoundingMode.HALF_UP));

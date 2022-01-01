@@ -18,8 +18,8 @@ public class Main {
         executor.execute(task);
         executor.shutdown();
         while (!executor.isTerminated()) {
-            System.out.println(task.getPi() + String.format(" (%07.3f)", task.getProgress()));
-            Thread.sleep(1000);
+            System.out.println(task.getPi() + String.format(" %7.2f%%", task.getProgress()));
+            Thread.sleep(3000);
         }
         System.out.println(task.getPi() + String.format(" (%f)", task.getProgress()));
     }
