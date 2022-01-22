@@ -16,7 +16,7 @@ public class RunnableWName implements Runnable {
 
     @Override
     public void run() {
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 5; i++) {
             if (useSync) {
                 List<String> listNaturalNumbers = generator.getListNaturalNumbers();
                 synchronized (listNaturalNumbers) { //Warning that we sync on local variable, but actual object is not locally created and is actually shared
