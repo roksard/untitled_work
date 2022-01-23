@@ -38,6 +38,7 @@ public class Main {
         System.out.println("number of successful hits : probability to get this number (%). If a number is not shown, then its probability is 0%");
 //        System.out.println(customerNPerQuantity);
 
+        //using a list of keys for a sorted representation of data
         ArrayList<Integer> listOfKeys = new ArrayList<Integer>(customerNPerProcent.keySet());
         listOfKeys.sort(Integer::compareTo);
         for (Integer key : listOfKeys) {
